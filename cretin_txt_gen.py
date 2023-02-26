@@ -22,24 +22,27 @@ class User_input():
         element_input_requirement(element)
         self.atoms.append([element, quantum_n_max, iso_min, iso_max])
 
-    def materials_region(self, nodes : list, elec_temp : float, ion_temp : float = None, rad_temp : float = None):
+    def materials_region(self,nodes :list, elec_temp : float, dimension : int = 1, ion_temp : float = None, rad_temp : float = None):
         if ion_temp == None:
-            ion_temp == elec_temp
+            ion_temp = elec_temp
         if rad_temp == None:
-            rad_temp == elec_temp
+            rad_temp = elec_temp
+        interger_input_requirement(dimension, [1,2,3])
+        
         self.elements_of_region = []
         self.material_of_region = []
         self.rho_of_region = []
         self.background_of_region = []
         # this works retroactively, I put the material_of_region list inside the self.region, if i later change 
         # the list it gets changed while its in the self.region
-        self.regions.append([nodes, elec_temp, ion_temp, rad_temp, self.elements_of_region])
+
+        self.regions.append([dimension, nodes, elec_temp, ion_temp, rad_temp])
 
     def materials_region_rho(self, rho : float):
         self.rho_of_region.append(rho)
 
-    def materials_region_element(self, iz : int, y_tot : float, iso_1 : int = None, iso_2 : int = None, lte = None, te : float = None, ti : float = None, vi:float = None):
-        self.elements_of_region.append([iz, y_tot, iso_1, iso_2, lte, te, ti, vi])
+    def materials_region_element(self, iz : int, initial_ion_population : float):
+        self.elements_of_region.append([iz, initial_ion_population])
 
     def materials_region_material(self, rho : float, atom_n : float, charge_avg : float, charge_avg_squared: float):
         self.material_of_region.append([rho, atom_n, charge_avg, charge_avg_squared])
@@ -139,3 +142,8 @@ def element_input_requirement(element: str):
 
     if element.upper() not in (name.upper() for name in element_list): 
         raise Exception('must be one of H, HE, LI, BE ...')
+    
+def interger_input_requirement(inter : int, options : list):
+    if inter not in options:
+        s = f'{inter} is not one of {options}'
+        raise Exception(s)
