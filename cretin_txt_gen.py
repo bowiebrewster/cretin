@@ -35,8 +35,8 @@ class User_input():
         self.background_of_region = []
         # this works retroactively, I put the material_of_region list inside the self.region, if i later change 
         # the list it gets changed while its in the self.region
-
-        self.regions.append([dimension, nodes, elec_temp, ion_temp, rad_temp])
+        self.region0 = [dimension, nodes, elec_temp, ion_temp, rad_temp]
+        self.regions.append((self.region0, self.elements_of_region, self.material_of_region, self.rho_of_region, self.background_of_region))
 
     def materials_region_rho(self, rho : float):
         self.rho_of_region.append(rho)
@@ -60,40 +60,42 @@ class User_input():
         string_input_requirement(scaling_type, ['lin','log','geom','exp'])
         self.geom_nodes.append([coordinate, scaling_type, node1, node2, min, max, ratio, drmin, slope])
 
-    def geometry_quad(self, node_1 : list, node_2: list, x_cor : list, y_cor :list, ratios: list):
-        list_input_requirement([node_1, node_2, x_cor, y_cor, ratios])
-        self.geom_quad = [node_1, node_2, x_cor, y_cor]
+    def geometry_quad(self, node_1 : list, node_2: list, x_cors : list, y_cors :list, ratios: list):
+        list_input_requirement([node_1, node_2, x_cors, y_cors, ratios])
+        self.geom_quad = [node_1, node_2, x_cors, y_cors]
 
     def radiation_ebins(self, n_boundaries: int, start: float, end : float, ratio : float = None):
-        self.rad_bins  = [n_boundaries, start, end, ratio]
+        self.rad_ebins  = [n_boundaries, start, end, ratio]
 
     def radiation_angles(self, n_rays : int, n_angles : int = None):
         self.rad_angles = [n_rays, n_angles]
 
     def radiation_lbins(self, n_bins : int, energy_span_1 : float, ratio_width1: float, energy_span_2 : float, ratio_width2: float):
-        self.radl_bins = [n_bins, energy_span_1, ratio_width1, energy_span_2, ratio_width2]
+        self.rad_lbins = [n_bins, energy_span_1, ratio_width1, energy_span_2, ratio_width2]
 
     def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, x_maxima : list, y_maxima : list = None, z_maxima : list = None):
         list_input_requirement([x_maxima, y_maxima, z_maxima])
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
+
         self.sources.append(["laser", laser_wavelength, option_1, option_2, x_maxima, y_maxima, z_maxima])
     
     def source_jbndry(self, index : float, E_min : float, E_max : float, option_1 : str, option_2 : str, x_maxima : list, y_maxima : list = None, z_maxima : list = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
-    
         list_input_requirement([x_maxima, y_maxima, z_maxima])
+
         self.sources.append(['jbndry',index, E_min, E_max, option_1, option_2, x_maxima, y_maxima, z_maxima])
 
     def source_jnu(self, E_min, E_max, option_1 : str, option_2 : str, x_maxima : list, y_maxima : list = None, z_maxima : list = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
         list_input_requirement([x_maxima, y_maxima, z_maxima])
+
         self.sources.append(['jnu', E_min, E_max, option_1, option_2, x_maxima, y_maxima, z_maxima])
 
     def controls(self, t_start : float, t_end : float, restart : bool = False, edits : bool = False):
-        self.constrols = [t_start, t_end, restart, edits]
+        self.control = [t_start, t_end, restart, edits]
 
     def popular_switches(self, include_degeneracy : str = None, timestep_between_snapshot : int = 1000, time_step_control : str = 'use_dynamic_timesteps', line_transfer : str = None, kinematics = 'calculate approx. LTE and QSS distributions', continuum_transfer : str = None):
         if include_degeneracy != None:
@@ -131,7 +133,7 @@ def list_input_requirement(lis):
 def string_input_requirement(string: str, options: list):
     opt = ', '.join(options)
     if string not in options: 
-        s = f'{string} is not one of {opt}'
+        s = f'{string} is not one of: {opt}'
         raise Exception(s)
 
 def element_input_requirement(element: str):
@@ -145,5 +147,5 @@ def element_input_requirement(element: str):
     
 def interger_input_requirement(inter : int, options : list):
     if inter not in options:
-        s = f'{inter} is not one of {options}'
+        s = f'{inter} is not one of: {options}'
         raise Exception(s)
