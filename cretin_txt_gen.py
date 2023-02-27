@@ -98,15 +98,20 @@ class User_input():
         self.control = [t_start, t_end, restart, edits]
 
     def popular_switches(self, include_degeneracy : str = None, timestep_between_snapshot : int = 1000, time_step_control : str = 'use_dynamic_timesteps', line_transfer : str = None, kinematics = 'calculate approx. LTE and QSS distributions', continuum_transfer : str = None):
-        if include_degeneracy != None:
-            string_input_requirement(include_degeneracy, ['include electron_degeneracy',' ignore additional correction for ionizations','integrate collisional ionizations numerically','integrate collisional excitations numerically'])
-        string_input_requirement(time_step_control, ['use constant timesteps', ' use_dynamic timesteps'])
+        if include_degeneracy == None:
+            string0 = None
+        else:
+            include_degeneracy_dict = {'include electron_degeneracy' : .5,' ignore additional correction for ionizations' : -.5,'integrate collisional ionizations numerically': 1.5,'integrate collisional excitations numerically': 2.5}
+            string_input_requirement(include_degeneracy, include_degeneracy_dict.values())
+            string0 = 'switch 151 '+include_degeneracy_dict[include_degeneracy]
+            
+        string_input_requirement(time_step_control, ['use constant timesteps', 'use_dynamic_timesteps'])
         if line_transfer != None:
             string_input_requirement(line_transfer, ['do steady-state line transfer', 'do time-dependent line transfer'])
         string_input_requirement(kinematics, ['calculate approx. LTE and QSS distributions','time-dependent kinetics','use approx. LTE and QSS distributions to choose LTE or NLTE','steady-state kinetics','no kinetics'])
         if continuum_transfer != None:
-            string_input_requirement(continuum_transfer ['do steady-state continuum transfer','do time-dependent continuum transfer','1-d: use Feautrier formalism, integral formalism otherwise'])
-        self.pop_switches = [include_degeneracy, timestep_between_snapshot, time_step_control, line_transfer, kinematics, continuum_transfer]
+            string_input_requirement(continuum_transfer, ['do steady-state continuum transfer','do time-dependent continuum transfer','1-d: use Feautrier formalism, integral formalism otherwise'])
+        self.pop_switches = [string0, timestep_between_snapshot, time_step_control, line_transfer, kinematics, continuum_transfer]
 
     def other_switches(self):
         pass
@@ -133,8 +138,8 @@ def list_input_requirement(lis):
 def string_input_requirement(string: str, options: list):
     opt = ', '.join(options)
     if string not in options: 
-        s = f'{string} is not one of: {opt}'
-        raise Exception(s)
+        fstrin = f'{string} is not one of: {opt}'
+        raise Exception(fstrin)
 
 def element_input_requirement(element: str):
     if 'element_list' not in globals():
@@ -147,5 +152,6 @@ def element_input_requirement(element: str):
     
 def interger_input_requirement(inter : int, options : list):
     if inter not in options:
-        s = f'{inter} is not one of: {options}'
-        raise Exception(s)
+        fstrin = f'{inter} is not one of: {options}'
+        raise Exception(fstrin)
+
