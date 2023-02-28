@@ -1,13 +1,10 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-# this is the generator file for the cretin .gen files since 
-# the goal of this file is to convert the rather archaic generator file with something more intuitive.
-# to keep the scope small, i've implemented only the most popular demand (by frequency of implementation in the gen files in the test folder)
+# this is the class that creates the generator class object which stores the user input and makes it accesible, readable and returns error messages.
+# this class allows ur to write readable intuitive code in the main cretin ipynb notebook using the full 
+# capabilities of python
 
-# one experiment corresponds too one generator class object, 
-# all the data of the simulation is stored in the dictionaries in the init, 
-# data is added to those dictionaries via function calls 
 class User_input():
     def __init__(self):
         # materials
@@ -47,7 +44,8 @@ class User_input():
     def materials_region_material(self, rho : float, atom_n : float, charge_avg : float, charge_avg_squared: float):
         self.material_of_region.append([rho, atom_n, charge_avg, charge_avg_squared])
 
-    def materials_region_background(self, ion_density: float, electron_density: float, avg_atomic_number : float, average_charge: float, average_charge_squared : float):
+    def materials_region_background(self, ion_density: float, electron_density: float, avg_atomic_number : float,
+                                     average_charge: float, average_charge_squared : float):
         self.background_of_region.append([ion_density, electron_density, avg_atomic_number, average_charge, average_charge_squared])
 
     def geometry(self, type : str = 'plane'):
@@ -55,7 +53,8 @@ class User_input():
         self.geometry = type
         self.geom_nodes = []
 
-    def geometry_nodes(self, coordinate : str, scaling_type: str, node1 : int, node2: int, min : float, max: float, ratio : float = None, drmin : float = None, slope : float = None):
+    def geometry_nodes(self, coordinate : str, scaling_type: str, node1 : int, node2: int, min : float, 
+                       max: float, ratio : float = None, drmin : float = None, slope : float = None):
         string_input_requirement(coordinate, ['r','x','y','x'])
         string_input_requirement(scaling_type, ['lin','log','geom','exp'])
         self.geom_nodes.append([coordinate, scaling_type, node1, node2, min, max, ratio, drmin, slope])
@@ -97,21 +96,49 @@ class User_input():
     def controls(self, t_start : float, t_end : float, restart : bool = False, edits : bool = False):
         self.control = [t_start, t_end, restart, edits]
 
-    def popular_switches(self, include_degeneracy : str = None, timestep_between_snapshot : int = 1000, time_step_control : str = 'use_dynamic_timesteps', line_transfer : str = None, kinematics = 'calculate approx. LTE and QSS distributions', continuum_transfer : str = None):
+    def popular_switches(self, include_degeneracy : str = None, timestep_type : str = None, continuum_transfer : str = None,
+                          continuum_transfer_evolves_temp : bool = False, timestep_between_snapshot : int = None, kinematics : str = None):
+        # using the gather_data.ipynb file i've searched for the most common switches 
         if include_degeneracy == None:
             string0 = None
         else:
-            include_degeneracy_dict = {'include electron_degeneracy' : .5,' ignore additional correction for ionizations' : -.5,'integrate collisional ionizations numerically': 1.5,'integrate collisional excitations numerically': 2.5}
-            string_input_requirement(include_degeneracy, include_degeneracy_dict.values())
-            string0 = 'switch 151 '+include_degeneracy_dict[include_degeneracy]
-            
-        string_input_requirement(time_step_control, ['use constant timesteps', 'use_dynamic_timesteps'])
-        if line_transfer != None:
-            string_input_requirement(line_transfer, ['do steady-state line transfer', 'do time-dependent line transfer'])
-        string_input_requirement(kinematics, ['calculate approx. LTE and QSS distributions','time-dependent kinetics','use approx. LTE and QSS distributions to choose LTE or NLTE','steady-state kinetics','no kinetics'])
-        if continuum_transfer != None:
-            string_input_requirement(continuum_transfer, ['do steady-state continuum transfer','do time-dependent continuum transfer','1-d: use Feautrier formalism, integral formalism otherwise'])
-        self.pop_switches = [string0, timestep_between_snapshot, time_step_control, line_transfer, kinematics, continuum_transfer]
+            include_degeneracy_dict = {'include electron degeneracy' : .5,' ignore additional correction for ionizations' : -.5,
+                                       'integrate collisional ionizations numerically': 1.5,'integrate collisional excitations numerically': 2.5}
+            string_input_requirement(include_degeneracy, include_degeneracy_dict.keys())
+            string0 = 'switch 151 '+str(include_degeneracy_dict[include_degeneracy])
+
+        if timestep_type == None:
+            string1 = None
+        else:
+            time_step_dict = {'use constant timesteps' : -1, 'use_dynamic_timesteps' : 1}
+            string_input_requirement(timestep_type, time_step_dict.keys())   
+            string1 = 'switch 29 '+str(time_step_dict[timestep_type])
+
+        if continuum_transfer == None:
+            string2 = None
+        else:
+            continuum_transfer_dict = {'do steady-state continuum transfer': .5, 'do time-dependent continuum transfer':-.5, '1-d: use Feautrier formalism, integral formalism otherwise': 1}
+            string_input_requirement(continuum_transfer, continuum_transfer_dict.keys())   
+            string2 = 'switch 36 '+str(continuum_transfer_dict[continuum_transfer])
+
+        if continuum_transfer_evolves_temp == False:
+            string3 = None
+        else:
+            string3 = 'switch 100 1'
+
+        if timestep_between_snapshot == None:
+            string4 = None
+        else:
+            string4  = 'switch 30 '+str(timestep_between_snapshot)
+
+        if kinematics == None:
+            string5 = None
+        else:
+            kinematics_dict = {'steady-state kinetics': 0, 'time-dependent kinetics':.5, 'use approx. LTE and QSS distributions to choose LTE or NLTE': 1.5, 'calculate approx. LTE and QSS distribution': -1, 'no kinetics':-1.5}
+            string_input_requirement(kinematics, kinematics_dict.keys())   
+            string5 = 'switch 25 '+str(kinematics_dict[kinematics])
+
+        self.pop_switches = [string0, string1, string2, string3, string4, string5]
 
     def other_switches(self):
         pass
