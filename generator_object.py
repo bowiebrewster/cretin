@@ -13,11 +13,20 @@ class User_input():
 
         # sources 
         self.sources = []
+        self.sources_aprd = []
 
     # materials
     def materials_atom(self, element : str, quantum_n_max : int = 10, iso_min : int = None, iso_max : int= None):
         element_input_requirement(element)
-        self.atoms.append([element, quantum_n_max, iso_min, iso_max])
+
+        self.modeltype_of_atom =[]
+        self.atom0 = [element, quantum_n_max, iso_min, iso_max]
+        self.atoms.append([self.atom0, self.modeltype_of_atom])
+
+    def materials_atom_modeltype(self, type1 : str, type2 : str):
+        string_input_requirement(type1, ['fly','term','dca','radonly','sublevel','johnson'])
+        string_input_requirement(type2, ['fly','term','dca','radonly','sublevel','johnson'])
+        self.modeltype_of_atom.append([type1, type2])
 
     def materials_region(self,nodes :list, elec_temp : float, dimension : int = 1, ion_temp : float = None, rad_temp : float = None):
         if ion_temp == None:
@@ -26,10 +35,9 @@ class User_input():
             rad_temp = elec_temp
         interger_input_requirement(dimension, [1,2,3])
         
-        self.elements_of_region = []
-        self.material_of_region = []
-        self.rho_of_region = []
-        self.background_of_region = []
+        self.elements_of_region, self.material_of_region, self.rho_of_region= [], [], []
+        self.background_of_region, self.opacity_of_region, level_of_region  = [], [], []
+
         # this works retroactively, I put the material_of_region list inside the self.region, if i later change 
         # the list it gets changed while its in the self.region
         self.region0 = [dimension, nodes, elec_temp, ion_temp, rad_temp]
@@ -48,6 +56,15 @@ class User_input():
                                      average_charge: float, average_charge_squared : float):
         self.background_of_region.append([ion_density, electron_density, avg_atomic_number, average_charge, average_charge_squared])
 
+    def materials_region_opacity(self, form : str , p_vals : list, e_vals : list):
+        # see page 26 of documentation for exact fomulas corresponding to forms
+        string_input_requirement(form, ['constant', 'power-law','exponential','gaussian','cutoff'])
+        self.opacity_of_region.append([form, p_vals, e_vals])
+
+    def materials_region_level(self, iz : int, isoelectronic_sequence : int, level : int, iso_range : list = None):
+        list_input_requirement(iso_range)
+        self.level_of_region.append([iz, isoelectronic_sequence, level, iso_range])
+
     def geometry(self, type : str = 'plane'):
         string_input_requirement(type, ['none','plane','slab','cylinder','sphere','wedge','xy','rz', 'xyz'])
         self.geometry = type
@@ -63,14 +80,44 @@ class User_input():
         list_input_requirement([node_1, node_2, x_cors, y_cors, ratios])
         self.geom_quad = [node_1, node_2, x_cors, y_cors]
 
+    def geometry_product_mesh(self, product_mesh: bool = False):
+        self.prod_mesh = product_mesh
+
     def radiation_ebins(self, n_boundaries: int, start: float, end : float, ratio : float = None):
         self.rad_ebins  = [n_boundaries, start, end, ratio]
 
     def radiation_angles(self, n_rays : int, n_angles : int = None):
         self.rad_angles = [n_rays, n_angles]
 
+    # TODO should be part of line
     def radiation_lbins(self, n_bins : int, energy_span_1 : float, ratio_width1: float, energy_span_2 : float, ratio_width2: float):
         self.rad_lbins = [n_bins, energy_span_1, ratio_width1, energy_span_2, ratio_width2]
+
+    def radiation_line(self, index : int, model : int, lower_state : list, higher_state : list):
+        self.rad_line = [index, model, lower_state, higher_state]
+
+    def radiation_spectrum(self, n_energies : int, energy_range : list, ratio : float):
+        self.rad_spectrum = [n_energies, energy_range, ratio]
+
+    def radiation_aprd(self, voigt_paramters : list):
+        self.sources_aprd.append(voigt_paramters)
+    
+    def source_boundary(self, type : str, node_ir : float = None, node_1 : list = None, node_2 : list = None, node3 : list = None):
+        string_input_requirement(type, ['streaming', 'milne','value'])
+        if node_ir != None and node_1 == None and node_2 == None and node3 == None:
+            pass #type1
+        elif node_ir == None and node_1 != None and node_2 != None and node3 == None:
+            pass #type2
+        elif node_ir == None and node_1 != None and node_2 != None and node3 != None:
+            pass #type3
+        else:
+            raise Exception(""" the only allowed combinations are as follows:
+            boundary package type ir [history id] multiplier value or
+            boundary package type k1 k2 l1 l2 [history id] value or
+            boundary package type k1 k2 l1 l2 m1 m2 [history id] value
+            """)
+
+        self.source_bound = [type, node_ir, node_1, node_2, node3]
 
     def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, x_maxima : list, y_maxima : list = None, z_maxima : list = None):
         list_input_requirement([x_maxima, y_maxima, z_maxima])
@@ -93,11 +140,17 @@ class User_input():
 
         self.sources.append(['jnu', E_min, E_max, option_1, option_2, x_maxima, y_maxima, z_maxima])
 
+    # TODO
+    def source_rswitch(self):
+        pass
+
     def controls(self, t_start : float, t_end : float, restart : bool = False, edits : bool = False):
         self.control = [t_start, t_end, restart, edits]
 
     def popular_switches(self, include_degeneracy : str = None, timestep_type : str = None, continuum_transfer : str = None,
                           continuum_transfer_evolves_temp : bool = False, timestep_between_snapshot : int = None, kinematics : str = None):
+        # TODO include switch 11, 28, 30, 55
+        
         # using the gather_data.ipynb file i've searched for the most common switches 
         if include_degeneracy == None:
             string0 = None
@@ -140,6 +193,11 @@ class User_input():
 
         self.pop_switches = [string0, string1, string2, string3, string4, string5]
 
+    # TODO
+    def pop_paramters():
+        pass
+    
+    # TODO
     def other_switches(self):
         pass
         """
