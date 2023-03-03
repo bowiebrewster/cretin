@@ -89,12 +89,12 @@ class User_input():
     def radiation_angles(self, n_rays : int, n_angles : int = None):
         self.rad_angles = [n_rays, n_angles]
 
-    # TODO should be part of line
-    def radiation_lbins(self, n_bins : int, energy_span_1 : float, ratio_width1: float, energy_span_2 : float, ratio_width2: float):
-        self.rad_lbins = [n_bins, energy_span_1, ratio_width1, energy_span_2, ratio_width2]
-
     def radiation_line(self, index : int, model : int, lower_state : list, higher_state : list):
         self.rad_line = [index, model, lower_state, higher_state]
+        self.rad_lbins = []
+
+    def radiation_lbins(self, n_bins : int, energy_span_1 : float, ratio_width1: float, energy_span_2 : float, ratio_width2: float):
+        self.rad_lbins.append([n_bins, energy_span_1, ratio_width1, energy_span_2, ratio_width2])
 
     def radiation_spectrum(self, n_energies : int, energy_range : list, ratio : float):
         self.rad_spectrum = [n_energies, energy_range, ratio]
@@ -140,16 +140,41 @@ class User_input():
 
         self.sources.append(['jnu', E_min, E_max, option_1, option_2, x_maxima, y_maxima, z_maxima])
 
-    # TODO
-    def source_rswitch(self):
-        pass
+    def source_rswitch(self, c_is_inf : bool = None, assume_LTE : bool = None, radiation_transfer_algorithm1d : str = None, 
+                       radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
+                       multi_group_acceleration : str = None, use_flux_limiting : bool = None):
+        string0 = 'rswitch 5 0' if c_is_inf == True else None
+        string1 = 'rswitch 20 0' if assume_LTE == True else None
+        rad_1d_dict = {'do flux-limited diffusion':.5,'do transport using Feautrier formalism':-1,'do transport using integral formalism':-2}
+        rad_2d_dict = {'use iccg':1, 'use ilur':2}
+
+        if radiation_transfer_algorithm1d != None and radiation_transfer_algorithm2d != None:
+            raise Exception("You obviously can not simulate in 1d and 2d at the same time")
+        elif radiation_transfer_algorithm1d == None and radiation_transfer_algorithm2d == None:
+            string2 = None
+        elif radiation_transfer_algorithm1d != None and radiation_transfer_algorithm2d == None:
+            string_input_requirement(radiation_transfer_algorithm1d, rad_1d_dict.keys())
+            string2 = rad_1d_dict[radiation_transfer_algorithm1d]
+        elif radiation_transfer_algorithm1d == None and radiation_transfer_algorithm2d != None:
+            string_input_requirement(radiation_transfer_algorithm2d, rad_2d_dict.keys())
+            string2 = rad_2d_dict[radiation_transfer_algorithm2d]
+        else:
+            raise Exception('Error in source rswitch radiation_transfer_algorithm1')
+        
+        string2 = 'rswitch 1 ' + str(string2) if string2 != None else None
+        string3 = 'rswitch 3 ' + str(max_iter_intensities_temp) if max_iter_intensities_temp != None else None
+        multi_group_acceleration_dict = {'no acceleration (or direct solution for 1 group)':0,'grey acceleration':1,
+                                         'direct multigroup acceleratio':2,'direct solution (1-d only)':3,'diagonal ALI multigroup acceleration (1-d only)':4}
+        string4 = 'rswitch 4 ' + str(multi_group_acceleration_dict[multi_group_acceleration]) if multi_group_acceleration != None else None
+        string5 = 'rswitch 6 1' if use_flux_limiting == True else None
+        self.source_rswitch0 = [string0, string1, string2, string3, string4, string5]
 
     def controls(self, t_start : float, t_end : float, restart : bool = False, edits : bool = False):
         self.control = [t_start, t_end, restart, edits]
 
     def popular_switches(self, include_degeneracy : str = None, timestep_type : str = None, continuum_transfer : str = None,
-                          continuum_transfer_evolves_temp : bool = False, timestep_between_snapshot : int = None, kinematics : str = None):
-        # TODO include switch 11, 28, 30, 55
+                          continuum_transfer_evolves_temp : bool = False, timestep_between_snapshot : int = None, 
+                          kinematics : str = None, initialization_control : str = None, continuum_lowering_control  : str = None):
         
         # using the gather_data.ipynb file i've searched for the most common switches 
         if include_degeneracy == None:
@@ -174,15 +199,8 @@ class User_input():
             string_input_requirement(continuum_transfer, continuum_transfer_dict.keys())   
             string2 = 'switch 36 '+str(continuum_transfer_dict[continuum_transfer])
 
-        if continuum_transfer_evolves_temp == False:
-            string3 = None
-        else:
-            string3 = 'switch 100 1'
-
-        if timestep_between_snapshot == None:
-            string4 = None
-        else:
-            string4  = 'switch 30 '+str(timestep_between_snapshot)
+        string3 =  'switch 100 1' if continuum_transfer_evolves_temp == True else None
+        string4 = None if timestep_between_snapshot == None else 'switch 30 ' + str(timestep_between_snapshot)  
 
         if kinematics == None:
             string5 = None
@@ -191,12 +209,23 @@ class User_input():
             string_input_requirement(kinematics, kinematics_dict.keys())   
             string5 = 'switch 25 '+str(kinematics_dict[kinematics])
 
-        self.pop_switches = [string0, string1, string2, string3, string4, string5]
+        initialization_control_dict = {'LTE at fixed electron density':-1,' LTE at fixed ion density':0,'steady-state w/ radiation transfer':1,
+                                           'steady-state kinetics w/o radiation transfer':2,': no kinetics, broadcast boundary radiation':3, 'none':4}
+        string_input_requirement(initialization_control, initialization_control_dict.values())
+        string6 = 'switch 28 '+ str(initialization_control_dict[initialization_control]) if initialization_control != None else None
+        
+        continuum_lowering_control_dict = {'approximate accounting for missing Rydberg levels':-1,' no continuum lowering':0,'Stewart-Pyatt with formula for degeneracy lowering':1,
+                                      'Stewart-Pyatt with microfield degeneracy lowering':2,'microfield degeneracy lowering w/o continuum lowering':3,
+                                      'SP/EK w/o degeneracy lowering':5,' use maximum of SP/EK and approximate accounting':10}
+
+        string7 = 'switch 55 '+ str(continuum_lowering_control_dict[continuum_lowering_control]) if continuum_lowering_control != None else None
+        
+        self.pop_switches = [string0, string1, string2, string3, string4, string5, string6, string7]
 
     # TODO
     def pop_paramters():
         pass
-    
+
     # TODO
     def other_switches(self):
         pass
