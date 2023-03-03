@@ -5,6 +5,7 @@ class Text_generator():
         self.user_input = user_input
         self.dict = self.user_input.__dict__.keys()
 
+    # generates a "chapter" string in the generator file
     def start_chapter(self, name : str):
         deliniator = 'c ------------------------------------------------------------'
         header = deliniator +'\nc   '+name+'\n'+deliniator+'\n'
@@ -22,7 +23,7 @@ class Text_generator():
     
     #flatten
     def flat(self, lis:list):
-        return [item for sublist in self.user_input.geom_quad for item in sublist]
+        return [item for sublist in lis for item in sublist]
     
     def materials(self):
         string = self.start_chapter('Materials')
@@ -32,7 +33,10 @@ class Text_generator():
 
         # materials_atom
         for atom in atoms:
-            line = f'atoms hydrogenic_{atom[2]} {atom[1]} \n'
+            atom0, modeltpye = atom
+            print(atom0)
+            print(modeltpye)
+            line = f'atoms hydrogenic_{atom0[2]} {atom0[1]} \n'
             string += line
 
         for region in regions:

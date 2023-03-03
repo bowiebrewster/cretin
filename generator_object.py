@@ -21,7 +21,7 @@ class User_input():
 
         self.modeltype_of_atom =[]
         self.atom0 = [element, quantum_n_max, iso_min, iso_max]
-        self.atoms.append([self.atom0, self.modeltype_of_atom])
+        self.atoms.append((self.atom0, self.modeltype_of_atom))
 
     def materials_atom_modeltype(self, type1 : str, type2 : str):
         string_input_requirement(type1, ['fly','term','dca','radonly','sublevel','johnson'])
@@ -36,7 +36,7 @@ class User_input():
         interger_input_requirement(dimension, [1,2,3])
         
         self.elements_of_region, self.material_of_region, self.rho_of_region= [], [], []
-        self.background_of_region, self.opacity_of_region, level_of_region  = [], [], []
+        self.background_of_region, self.opacity_of_region, self.level_of_region  = [], [], []
 
         # this works retroactively, I put the material_of_region list inside the self.region, if i later change 
         # the list it gets changed while its in the self.region
@@ -62,7 +62,7 @@ class User_input():
         self.opacity_of_region.append([form, p_vals, e_vals])
 
     def materials_region_level(self, iz : int, isoelectronic_sequence : int, level : int, iso_range : list = None):
-        list_input_requirement(iso_range)
+        list_input_requirement([iso_range])
         self.level_of_region.append([iz, isoelectronic_sequence, level, iso_range])
 
     def geometry(self, type : str = 'plane'):
@@ -165,6 +165,7 @@ class User_input():
         string3 = 'rswitch 3 ' + str(max_iter_intensities_temp) if max_iter_intensities_temp != None else None
         multi_group_acceleration_dict = {'no acceleration (or direct solution for 1 group)':0,'grey acceleration':1,
                                          'direct multigroup acceleratio':2,'direct solution (1-d only)':3,'diagonal ALI multigroup acceleration (1-d only)':4}
+        string_input_requirement(multi_group_acceleration, multi_group_acceleration_dict.keys())
         string4 = 'rswitch 4 ' + str(multi_group_acceleration_dict[multi_group_acceleration]) if multi_group_acceleration != None else None
         string5 = 'rswitch 6 1' if use_flux_limiting == True else None
         self.source_rswitch0 = [string0, string1, string2, string3, string4, string5]
@@ -209,16 +210,22 @@ class User_input():
             string_input_requirement(kinematics, kinematics_dict.keys())   
             string5 = 'switch 25 '+str(kinematics_dict[kinematics])
 
-        initialization_control_dict = {'LTE at fixed electron density':-1,' LTE at fixed ion density':0,'steady-state w/ radiation transfer':1,
+        if initialization_control == None:
+            string6 = None
+        else:
+            initialization_control_dict = {'LTE at fixed electron density':-1,' LTE at fixed ion density':0,'steady-state w/ radiation transfer':1,
                                            'steady-state kinetics w/o radiation transfer':2,': no kinetics, broadcast boundary radiation':3, 'none':4}
-        string_input_requirement(initialization_control, initialization_control_dict.values())
-        string6 = 'switch 28 '+ str(initialization_control_dict[initialization_control]) if initialization_control != None else None
+            string_input_requirement(initialization_control, initialization_control_dict.keys())
+            string6 = 'switch 28 '+ str(initialization_control_dict[initialization_control]) if initialization_control != None else None
         
-        continuum_lowering_control_dict = {'approximate accounting for missing Rydberg levels':-1,' no continuum lowering':0,'Stewart-Pyatt with formula for degeneracy lowering':1,
+        if initialization_control == None:
+            string7 = None
+        else:
+            continuum_lowering_control_dict = {'approximate accounting for missing Rydberg levels':-1,' no continuum lowering':0,'Stewart-Pyatt with formula for degeneracy lowering':1,
                                       'Stewart-Pyatt with microfield degeneracy lowering':2,'microfield degeneracy lowering w/o continuum lowering':3,
                                       'SP/EK w/o degeneracy lowering':5,' use maximum of SP/EK and approximate accounting':10}
 
-        string7 = 'switch 55 '+ str(continuum_lowering_control_dict[continuum_lowering_control]) if continuum_lowering_control != None else None
+            string7 = 'switch 55 '+ str(continuum_lowering_control_dict[continuum_lowering_control]) if continuum_lowering_control != None else None
         
         self.pop_switches = [string0, string1, string2, string3, string4, string5, string6, string7]
 
@@ -250,6 +257,7 @@ def list_input_requirement(lis):
                     raise Exception('list must contain int or float')
 
 def string_input_requirement(string: str, options: list):
+    #print(options)
     opt = ', '.join(options)
     if string not in options: 
         fstrin = f'{string} is not one of: {opt}'
