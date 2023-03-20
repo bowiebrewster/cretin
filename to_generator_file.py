@@ -34,8 +34,6 @@ class Text_generator():
         # materials_atom
         for atom in atoms:
             atom0, modeltpye = atom
-            print(atom0)
-            print(modeltpye)
             line = f'atoms hydrogenic_{atom0[2]} {atom0[1]} \n'
             string += line
 
@@ -59,14 +57,19 @@ class Text_generator():
         return string
 
     def geometry(self):
+        if 'geometry' not in dir(self.user_input):
+            return ""
         string = self.start_chapter('Geometry')
         string +='\n geometry ' + str(self.user_input.geometry)
 
-        nodes = self.user_input.geom_nodes[0]
-        nodes = [nodes[0] + nodes[1]] + nodes[2:-1]
-        string +='\n ' + self.ilts(nodes)
-        quad = self.flat(self.user_input.geom_quad)
-        string +='\n quad ' + self.ilts(quad)
+        if len(self.user_input.geom_nodes) > 0:
+            nodes = self.user_input.geom_nodes[0]
+            nodes = [nodes[0] + nodes[1]] + nodes[2:-1]
+            string +='\n ' + self.ilts(nodes)
+        
+        if 'geom_quad' in dir(self.user_input):
+            quad = self.flat(self.user_input.geom_quad)
+            string +='\n quad ' + self.ilts(quad)
 
         return string
 
@@ -90,7 +93,7 @@ class Text_generator():
             sources = self.user_input.sources
             for source in sources:
                 if source[0] == 'laser':
-                    string += '\n source laser ' + str(source[1]) + 'x ' + self.ilts(self.flat(source[2:-1]))
+                    string += '\n source laser ' + str(source[1]) + 'x ' + self.ilts(source[2:-1])
                 else:
                     string +=  '\n ' + self.ilts(source)
 
@@ -108,6 +111,8 @@ class Text_generator():
         return string
     
     def pop_switches(self):
+        if 'pop_switches' not in dir(self.user_input):
+            return ''
         pop = self.user_input.pop_switches
         string = self.start_chapter('Switches')
         for string0 in pop:

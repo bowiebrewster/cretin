@@ -257,7 +257,6 @@ def list_input_requirement(lis):
                     raise Exception('list must contain int or float')
 
 def string_input_requirement(string: str, options: list):
-    #print(options)
     opt = ', '.join(options)
     if string not in options: 
         fstrin = f'{string} is not one of: {opt}'
