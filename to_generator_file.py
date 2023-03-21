@@ -57,7 +57,7 @@ class Text_generator():
         return string
 
     def geometry(self):
-        if 'geometry' not in dir(self.user_input):
+        if 'geometry' not in self.dict:
             return ""
         string = self.start_chapter('Geometry')
         string +='\n geometry ' + str(self.user_input.geometry)
@@ -67,7 +67,7 @@ class Text_generator():
             nodes = [nodes[0] + nodes[1]] + nodes[2:-1]
             string +='\n ' + self.ilts(nodes)
         
-        if 'geom_quad' in dir(self.user_input):
+        if 'geom_quad' in self.dict:
             quad = self.flat(self.user_input.geom_quad)
             string +='\n quad ' + self.ilts(quad)
 
@@ -75,15 +75,24 @@ class Text_generator():
 
     def radiation(self):
         string = self.start_chapter('Radiation')
+        if 'rad_line' in self.dict:
+            rad_lin = self.user_input.rad_line
+        
+            string += f'line {self.ilts(rad_lin[0:2])} {self.ilts(rad_lin[2])} {self.ilts(rad_lin[3])}'
+        
+
+            if 'rad_lbins' in self.dict:
+                lbins = self.user_input.rad_lbins
+                string += '\n\tlbins ' + self.ilts(lbins[0])
+
+
         if 'rad_ebins' in self.dict:
             ebins = self.user_input.rad_ebins
-            string += '\n ebins ' + self.ilts(ebins)
-        if 'rad_lbins' in self.dict:
-            lbins = self.user_input.rad_lbins
-            string += '\n lbins ' + self.ilts(lbins)
+            string += '\nebins ' + self.ilts(ebins)
+
         if 'rad_angles' in self.dict:
             angles = self.user_input.rad_angles
-            string += '\n angles ' + self.ilts(angles)
+            string += '\nangles ' + self.ilts(angles)
 
         return string
     
@@ -92,18 +101,20 @@ class Text_generator():
             string = self.start_chapter('Sources')
             sources = self.user_input.sources
             for source in sources:
-                if source[0] == 'laser':
-                    string += '\n source laser ' + str(source[1]) + 'x ' + self.ilts(source[2:-1])
+                if source[0] in ['laser','jnu','jbndry']:
+                    string += f'\n source {source[0]} {source[1]}x {self.ilts(source[2:-1])}'
                 else:
                     string +=  '\n ' + self.ilts(source)
 
         return string 
     
     def controls(self):
+        if 'control' not in self.dict:
+            return ""
         control = self.user_input.control
         string = self.start_chapter('Controls')
-        string += '\nt_start '+str(control[0])
-        string += '\nt_end '+str(control[1])
+        string += '\ntstart '+str(control[0])
+        string += '\ntquit '+str(control[1])
         if control[2]:
             string += '\n\nrestart '
         if control[3]:
@@ -111,7 +122,7 @@ class Text_generator():
         return string
     
     def pop_switches(self):
-        if 'pop_switches' not in dir(self.user_input):
+        if 'pop_switches' not in self.dict:
             return ''
         pop = self.user_input.pop_switches
         string = self.start_chapter('Switches')

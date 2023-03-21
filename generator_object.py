@@ -28,19 +28,21 @@ class User_input():
         string_input_requirement(type2, ['fly','term','dca','radonly','sublevel','johnson'])
         self.modeltype_of_atom.append([type1, type2])
 
-    def materials_region(self,nodes :list, elec_temp : float, dimension : int = 1, ion_temp : float = None, rad_temp : float = None):
+    def materials_region(self, nodes :list, elec_temp : float, ion_temp : float = None, rad_temp : float = None):
         if ion_temp == None:
             ion_temp = elec_temp
         if rad_temp == None:
             rad_temp = elec_temp
-        interger_input_requirement(dimension, [1,2,3])
+
+        interger_input_requirement(len(nodes), [2,4,6])
+        self.dimension = int(len(nodes)/2)
         
         self.elements_of_region, self.material_of_region, self.rho_of_region= [], [], []
         self.background_of_region, self.opacity_of_region, self.level_of_region  = [], [], []
 
         # this works retroactively, I put the material_of_region list inside the self.region, if i later change 
         # the list it gets changed while its in the self.region
-        self.region0 = [dimension, nodes, elec_temp, ion_temp, rad_temp]
+        self.region0 = [self.dimension, nodes, elec_temp, ion_temp, rad_temp]
         self.regions.append((self.region0, self.elements_of_region, self.material_of_region, self.rho_of_region, self.background_of_region))
 
     def materials_region_rho(self, rho : float):
@@ -66,13 +68,29 @@ class User_input():
         self.level_of_region.append([iz, isoelectronic_sequence, level, iso_range])
 
     def geometry(self, type : str = 'plane'):
-        string_input_requirement(type, ['none','plane','slab','cylinder','sphere','wedge','xy','rz', 'xyz'])
+        string_input_requirement(type, ['none', 'plane', 'slab', 'cylinder', 'sphere', 'wedge', 'xy', 'rz', 'xyz'])
+        if type == 'none' and self.dimension != 0:
+            raise Exception("if type is none dimension should equal zero")
+        elif type in ['plane','slab','cylinder','sphere','wedge'] and self.dimension != 1:
+            raise Exception(f"if type is {type} dimension should equal 1")
+        elif type in ['xy','rz'] and self.dimension != 2:
+            raise Exception(f"if type is {type} dimension should equal 2")
+        elif type == 'xyz' and self.dimension != 3:
+            raise Exception(f"if type is {type} dimension should equal 3")
         self.geometry = type
         self.geom_nodes = []
 
     def geometry_nodes(self, coordinate : str, scaling_type: str, node1 : int, node2: int, min : float, 
                        max: float, ratio : float = None, drmin : float = None, slope : float = None):
+        if type(self.geometry) == type(''):
+            raise Exception(f'geometry setting {self.geometry} makes nodes call obsolete')
+        
         string_input_requirement(coordinate, ['r','x','y','x'])
+        if coordinate == 'r' and self.geometry not in ['cylinder','sphere']:
+            raise Exception("coordinate r is only compatible with 'cylinder' or 'sphere'")
+        if coordinate == 'r' and self.dimension != 1:
+            raise Exception("coordinate r is only compatible with 1d")
+
         string_input_requirement(scaling_type, ['lin','log','geom','exp'])
         self.geom_nodes.append([coordinate, scaling_type, node1, node2, min, max, ratio, drmin, slope])
 
@@ -93,7 +111,7 @@ class User_input():
         self.rad_line = [index, model, lower_state, higher_state]
         self.rad_lbins = []
 
-    def radiation_lbins(self, n_bins : int, energy_span_1 : float, ratio_width1: float, energy_span_2 : float, ratio_width2: float):
+    def radiation_lbins(self, n_bins : int, energy_span_1 : float, ratio_width1: float, energy_span_2 : float = None, ratio_width2: float = None):
         self.rad_lbins.append([n_bins, energy_span_1, ratio_width1, energy_span_2, ratio_width2])
 
     def radiation_spectrum(self, n_energies : int, energy_range : list, ratio : float):
