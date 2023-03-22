@@ -78,7 +78,7 @@ class User_input():
         elif type == 'xyz' and self.dimension != 3:
             raise Exception(f"if type is {type} dimension should equal 3")
         self.geometry = type
-        self.geom_nodes = []
+
 
     def geometry_nodes(self, coordinate : str, scaling_type: str, node1 : int, node2: int, min : float, 
                        max: float, ratio : float = None, drmin : float = None, slope : float = None):
@@ -92,7 +92,7 @@ class User_input():
             raise Exception("coordinate r is only compatible with 1d")
 
         string_input_requirement(scaling_type, ['lin','log','geom','exp'])
-        self.geom_nodes.append([coordinate, scaling_type, node1, node2, min, max, ratio, drmin, slope])
+        self.geom_nodes = [coordinate, scaling_type, node1, node2, min, max, ratio, drmin, slope]
 
     def geometry_quad(self, node_1 : list, node_2: list, x_cors : list, y_cors :list, ratios: list):
         list_input_requirement([node_1, node_2, x_cors, y_cors, ratios])
@@ -130,9 +130,9 @@ class User_input():
             pass #type3
         else:
             raise Exception(""" the only allowed combinations are as follows:
-            boundary package type ir [history id] multiplier value or
-            boundary package type k1 k2 l1 l2 [history id] value or
-            boundary package type k1 k2 l1 l2 m1 m2 [history id] value
+            1) boundary package type ir (history id) multiplier value or
+            2) boundary package type [k1 k2] [l1 l2] (history id) value or
+            3) boundary package type [k1 k2] [l1 l2] [m1 m2] (history id) value
             """)
 
         self.source_bound = [type, node_ir, node_1, node_2, node3]

@@ -62,7 +62,7 @@ class Text_generator():
         string = self.start_chapter('Geometry')
         string +='\n geometry ' + str(self.user_input.geometry)
 
-        if len(self.user_input.geom_nodes) > 0:
+        if 'geom_nodes' in self.dict:
             nodes = self.user_input.geom_nodes[0]
             nodes = [nodes[0] + nodes[1]] + nodes[2:-1]
             string +='\n ' + self.ilts(nodes)
@@ -77,6 +77,7 @@ class Text_generator():
         string = self.start_chapter('Radiation')
         if 'rad_line' in self.dict:
             rad_lin = self.user_input.rad_line
+            print("hello",rad_lin)
         
             string += f'line {self.ilts(rad_lin[0:2])} {self.ilts(rad_lin[2])} {self.ilts(rad_lin[3])}'
         
@@ -119,6 +120,7 @@ class Text_generator():
             string += '\n\nrestart '
         if control[3]:
             string += '\n edits'
+        string += '\n\ndump all'
         return string
     
     def pop_switches(self):
