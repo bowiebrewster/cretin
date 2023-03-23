@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import paths
 # this is the class that creates the generator class object which stores the user input and makes it accesible, readable and returns error messages.
 # this class allows ur to write readable intuitive code in the main cretin ipynb notebook using the full 
 # capabilities of python
@@ -283,7 +284,7 @@ def string_input_requirement(string: str, options: list):
 def element_input_requirement(element: str):
     if 'element_list' not in globals():
         global element_list
-        df = pd.read_csv('periodic_table.csv')
+        df = pd.read_csv(paths.to_folder_cretin()+'periodic_table.csv')
         element_list = df['Symbol'].to_string(index=False)
 
     if element.upper() not in (name.upper() for name in element_list): 
