@@ -6,6 +6,7 @@ import paths
 # this class allows ur to write readable intuitive code in the main cretin ipynb notebook using the full 
 # capabilities of python
 
+# change
 class User_input():
     def __init__(self):
         # materials
