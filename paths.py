@@ -20,7 +20,7 @@ def to_folder_test():
     return path
 
 def to_folder_cretin():
-    paths_main = ['/home/brewster/Desktop/cretin/cretin-1/',
+    paths_main = ['/home/brewster/Desktop/cretin/',
                     'c:/Users/M65E255/Onedrive - NN/desktop/cretin/']
 
     for path_main in paths_main:

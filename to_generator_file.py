@@ -77,15 +77,12 @@ class Text_generator():
         string = self.start_chapter('Radiation')
         if 'rad_line' in self.dict:
             rad_lin = self.user_input.rad_line
-            print("hello",rad_lin)
-        
+
             string += f'line {self.ilts(rad_lin[0:2])} {self.ilts(rad_lin[2])} {self.ilts(rad_lin[3])}'
         
-
             if 'rad_lbins' in self.dict:
                 lbins = self.user_input.rad_lbins
                 string += '\n\tlbins ' + self.ilts(lbins[0])
-
 
         if 'rad_ebins' in self.dict:
             ebins = self.user_input.rad_ebins
