@@ -82,8 +82,7 @@ class User_input():
         self.geometry = type
 
 
-    def geometry_nodes(self, coordinate : str, scaling_type: str, node1 : int, node2: int, min : float, 
-                       max: float, ratio : float = None, drmin : float = None, slope : float = None):
+    def geometry_nodes(self, coordinate : str, scaling_type: str, nodes : list, nodes_range : list, ratio : float = None, drmin : float = None, slope : float = None):
         if type(self.geometry) == type(''):
             raise Exception(f'geometry setting {self.geometry} makes nodes call obsolete')
         
@@ -94,7 +93,7 @@ class User_input():
             raise Exception("coordinate r is only compatible with 1d")
 
         string_input_requirement(scaling_type, ['lin','log','geom','exp'])
-        self.geom_nodes = [coordinate, scaling_type, node1, node2, min, max, ratio, drmin, slope]
+        self.geom_nodes = [coordinate, scaling_type, nodes, nodes_range, ratio, drmin, slope]
 
     def geometry_quad(self, node_1 : list, node_2: list, x_cors : list, y_cors :list, ratios: list):
         list_input_requirement([node_1, node_2, x_cors, y_cors, ratios])

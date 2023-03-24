@@ -34,7 +34,9 @@ class Text_generator():
         # materials_atom
         for atom in atoms:
             atom0, modeltpye = atom
-            line = f'atoms hydrogenic_{atom0[2]} {atom0[1]} \n'
+            if atom0[2] == None:
+                atom0[2] == ''
+            line = f'atoms hydrogenic_{atom0[1]} {atom0[0]} \n'
             string += line
 
         for region in regions:

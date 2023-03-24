@@ -14,7 +14,7 @@ def write(name : str, object):
         os.makedirs(paths.to_folder_test() + name)
 
     file_loc = paths.to_folder_test() + name + '/' + name + '.gen'
-    print(f'writing too {name}')
+    print(f'writing too {file_loc}')
     with open(file_loc, 'w') as f:
         for x in string:
             f.write(str(x))
@@ -39,34 +39,38 @@ def plot(name):
     path_test = paths.to_folder_test()
     os.chdir(path_test + '/' + name)
     file_list = glob.glob('*.d*')
+    print(file_list)
     fullpath = path_test + '/' + name + '/' + file_list[0]
 
     with h5py.File(fullpath, 'r') as f:
         counter = 0
-        path = '/'.join(paths.to_folder_cretin().split('/')[0:-2])+'/images'
+        path = path_test + name + '/images'
         if not os.path.exists(path):
             os.mkdir(path)
             
         print(f'plotting {name} too {path}')
 
+
         for key, value in f.items():
 
-            arr = np.array(f[key])
-            #print(counter,'\t', key,'\t', np.shape(arr))
+            arr = np.array(f[key]);
+            print(f'plot nr \t {counter} \t {key} \t {np.shape(arr)}')
 
             if len(arr.shape) == 2:
-                fig, ax = plt.subplots()
-                im = ax.imshow(arr)
-                ax.set_title(key)
+                fig, ax = plt.subplots();
+                im = ax.imshow(arr);
+                ax.set_title(key);
                 
-                plt.savefig(f'{path}/{key}.png')
-                plt.clf() 
+                fig.savefig(f'{path}/{key}.png');
+                fig.clf(); 
+                plt.close()
 
-            if len(arr.shape) == 1 and len(arr) >0:
-                plt.plot(arr)
-                plt.title(key)
-                plt.savefig(f'{path}/{key}.png')
-                plt.clf() 
+            if len(arr.shape) == 1 and len(arr) > 0:
+                plt.plot(arr);
+                plt.title(key);
+                plt.savefig(f'{path}/{key}.png');
+                plt.clf();
+                plt.close()
 
             counter += 1
 
