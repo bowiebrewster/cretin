@@ -2,14 +2,14 @@ from importlib import reload
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py, os, glob
-import generator_object, to_generator_file, search, paths #these python classes should be in the same folder as cretin_main
-for obj in [generator_object, to_generator_file, search, paths]:
+import generator_object, to_generator_string, search, paths #these python classes should be in the same folder as cretin_main
+for obj in [generator_object, to_generator_string, search, paths]:
     reload(obj)
 
 
 # takes the text string and writes it too the creting generator file
 def write(name : str, object):
-    string = to_generator_file.Text_generator(object).execute()
+    string = to_generator_string.Text_generator(object).execute()
 
     if not os.path.exists(paths.to_folder_test() + name):
         os.makedirs(paths.to_folder_test() + name)
