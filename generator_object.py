@@ -18,7 +18,7 @@ class User_input():
         self.sources_aprd = []
 
     # materials
-    def materials_atom(self, element : str, quantum_n_max : int = 10, iso_min : int = None, iso_max : int= None):
+    def materials_atom(self, element : str, quantum_n_max : int = 10, iso_min : int = None, iso_max : int= None, index : int = None):
         element_input_requirement(element)
 
         self.modeltype_of_atom =[]
@@ -50,8 +50,8 @@ class User_input():
     def materials_region_rho(self, rho : float):
         self.rho_of_region.append(rho)
 
-    def materials_region_element(self, iz : int, initial_ion_population : float):
-        self.elements_of_region.append([iz, initial_ion_population])
+    def materials_region_element(self,  initial_ion_population : float, index : int = None):
+        self.elements_of_region.append([index, initial_ion_population])
 
     def materials_region_material(self, rho : float, atom_n : float, charge_avg : float, charge_avg_squared: float):
         self.material_of_region.append([rho, atom_n, charge_avg, charge_avg_squared])
@@ -65,9 +65,9 @@ class User_input():
         string_input_requirement(form, ['constant', 'power-law','exponential','gaussian','cutoff'])
         self.opacity_of_region.append([form, p_vals, e_vals])
 
-    def materials_region_level(self, iz : int, isoelectronic_sequence : int, level : int, iso_range : list = None):
+    def materials_region_level(self, index : int, isoelectronic_sequence : int, level : int, iso_range : list = None):
         list_input_requirement([iso_range])
-        self.level_of_region.append([iz, isoelectronic_sequence, level, iso_range])
+        self.level_of_region.append([index, isoelectronic_sequence, level, iso_range])
 
     def geometry(self, type : str = 'plane'):
         string_input_requirement(type, ['none', 'plane', 'slab', 'cylinder', 'sphere', 'wedge', 'xy', 'rz', 'xyz'])
@@ -287,11 +287,22 @@ def element_input_requirement(element: str):
         df = pd.read_csv(paths.to_folder_cretin()+'periodic_table.csv')
         element_list = df['Symbol'].to_string(index=False)
 
-    if element.upper() not in (name.upper() for name in element_list): 
-        raise Exception('must be one of H, HE, LI, BE ...')
-    
+    new = []
+    for entry in element_list:
+        entry = ''.join(entry.split())
+        entry = entry.upper()
+        new.append(entry)
+
+    element_list = new
+    element = element.upper()
+    #print(element, element_list)
+    if element not in element_list: 
+        #raise Exception('must be one of H, HE, LI, BE ...')
+        pass
+
 def interger_input_requirement(inter : int, options : list):
     if inter not in options:
         fstrin = f'{inter} is not one of: {options}'
         raise Exception(fstrin)
 
+element_input_requirement('Sn')
