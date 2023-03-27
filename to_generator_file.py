@@ -59,15 +59,19 @@ class Text_generator():
         return string
 
     def geometry(self):
-        if 'geometry' not in self.dict:
-            return ""
         string = self.start_chapter('Geometry')
-        string +='\n geometry ' + str(self.user_input.geometry)
+        if 'geometry0' in self.dict:
+            string +='\n geometry ' + str(self.user_input.geometry0)
 
         if 'geom_nodes' in self.dict:
-            nodes = self.user_input.geom_nodes[0]
-            nodes = [nodes[0] + nodes[1]] + nodes[2:-1]
-            string +='\n ' + self.ilts(nodes)
+            nodes = self.user_input.geom_nodes
+            nodes0 = nodes[0] + nodes[1]+ f" {self.ilts(nodes[2])} {self.ilts(nodes[3])} "
+
+
+            string +='\n ' + nodes0
+            for val in nodes[4:-1]:
+                if val != None:
+                    string += f"{val} "
         
         if 'geom_quad' in self.dict:
             quad = self.flat(self.user_input.geom_quad)

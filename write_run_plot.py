@@ -7,6 +7,7 @@ for obj in [generator_object, to_generator_file, search, paths]:
     reload(obj)
 
 
+# takes the text string and writes it too the creting generator file
 def write(name : str, object):
     string = to_generator_file.Text_generator(object).execute()
 
@@ -39,21 +40,20 @@ def plot(name):
     path_test = paths.to_folder_test()
     os.chdir(path_test + '/' + name)
     file_list = glob.glob('*.d*')
-    print(file_list)
     fullpath = path_test + '/' + name + '/' + file_list[0]
 
     with h5py.File(fullpath, 'r') as f:
-        counter = 0
         path = path_test + name + '/images'
         if not os.path.exists(path):
             os.mkdir(path)
             
         print(f'plotting {name} too {path}')
+
         global arrays2d, arrays3d
         arrays2d, arrays3d = {}, {}
+        counter = 0
 
         for key, value in f.items():
-
             arr = np.array(f[key])
             print(f'plot nr \t {counter} \t {key} \t {np.shape(arr)}')
 

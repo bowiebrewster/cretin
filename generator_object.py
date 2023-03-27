@@ -79,7 +79,7 @@ class User_input():
             raise Exception(f"if type is {type} dimension should equal 2")
         elif type == 'xyz' and self.dimension != 3:
             raise Exception(f"if type is {type} dimension should equal 3")
-        self.geometry = type
+        self.geometry0 = type
 
 
     def geometry_nodes(self, coordinate : str, scaling_type: str, nodes : list, nodes_range : list, ratio : float = None, drmin : float = None, slope : float = None):
