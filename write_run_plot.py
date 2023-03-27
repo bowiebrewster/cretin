@@ -49,30 +49,60 @@ def plot(name):
             os.mkdir(path)
             
         print(f'plotting {name} too {path}')
-
+        global arrays2d, arrays3d
+        arrays2d, arrays3d = {}, {}
 
         for key, value in f.items():
 
-            arr = np.array(f[key]);
+            arr = np.array(f[key])
             print(f'plot nr \t {counter} \t {key} \t {np.shape(arr)}')
 
             if len(arr.shape) == 2:
-                fig, ax = plt.subplots();
-                im = ax.imshow(arr);
-                ax.set_title(key);
-                
-                fig.savefig(f'{path}/{key}.png');
-                fig.clf(); 
-                plt.close()
+                plot3d(path, key, arr)
 
             if len(arr.shape) == 1 and len(arr) > 0:
-                plt.plot(arr);
-                plt.title(key);
-                plt.savefig(f'{path}/{key}.png');
-                plt.clf();
-                plt.close()
+                plot2d(path, key, arr)
 
             counter += 1
+
+        print(f'plots {name} finished at location {path}')
+
+
+def plot3d(path:str, masterkey:str, arr):
+    print_bool = True
+    for key, array in arrays3d.items():
+        if np.shape(array) == np.shape(arr):
+            if np.allclose(arr, array):
+                print_bool = False
+                print(f"{masterkey} is identical to other array")
+
+    if print_bool:
+        arrays3d[masterkey] = arr
+        fig, ax = plt.subplots()
+        im = ax.imshow(arr)
+        ax.set_title(masterkey)
+
+        fig.savefig(f'{path}/{masterkey}.png')
+        fig.clf(); 
+        plt.close()
+
+def plot2d(path:str, masterkey:str, arr):
+    print_bool = True
+    for key, array in arrays2d.items():
+        if np.shape(array) == np.shape(arr):
+            if np.allclose(arr, array):
+                print_bool = False
+                print(f"{masterkey} is identical to other array")
+
+    if print_bool:
+        arrays2d[masterkey] = arr
+        plt.plot(arr)
+        plt.title(masterkey)
+        plt.savefig(f'{path}/{masterkey}.png')
+        plt.clf()
+        plt.close()
+
+
 
 def all(name: str, object):
     write(name, object)
