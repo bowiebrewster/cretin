@@ -148,7 +148,7 @@ class User_input():
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.sources.append(['jbndry',index, E_range, option_1, option_2, values, nodes])
+        self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes])
 
     def source_jnu(self, E_range : list, option_1 : str, option_2 : str, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
