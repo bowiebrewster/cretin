@@ -68,6 +68,36 @@ def plot(name : str, longprint : bool, plot_duplicates : bool):
         print(f'plots {name} finished at location {path}')
 
 
+
+naming_dict = {
+"mesh" : "nodal positions", 
+"r" : "nodal positions",
+"velocity" : "nodal velocities",
+"jnu" : "continuum radiation intensity",
+"absn": "continuum absorption",
+"emis": "emission",
+"jbar" : "line strengths",
+"radiation" : "jnu + jbar",
+"tev" : "electron tempratures",
+"tiv" : "ion tempratures",
+"trv" : "radiation tempratures",
+"temperatures" : "tev + tiv + trv",
+"rho" : "mass densities",
+"ne": "electron number densities", 
+"ni": "ion number densities",
+"yiso" : "iso sequence",
+"y"  : "atomic level populations",
+"populations" : "ni + yiso + y",
+"jsp" : "spectral radiation intensity",
+"kappa_sp"  :  "emission",
+"emis_sp" : "spectral absorption",
+"spectrum" : "jsp + kappa_sp + emis_sp",
+"jbar" : "line strength",
+"lines" : "jbar + ylinel + ylineu + sigma",
+"radiation" : "jnu + jbar",
+"drat" : "mesh + kappa_sp + emis_sp + velocity"
+}
+
 def plot3d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr):
     save_bool = True
     for key, array in arrays3d.items():
@@ -80,6 +110,9 @@ def plot3d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
         arrays3d[masterkey] = arr
         fig, ax = plt.subplots()
         im = ax.imshow(arr)
+        splitname = masterkey.split("_")[0]
+        if splitname in naming_dict.keys():
+            masterkey = naming_dict[splitname]+ "_".join(masterkey.split("_")[1:])
         ax.set_title(masterkey)
 
         fig.savefig(f'{path}/{masterkey}.png')
@@ -97,6 +130,9 @@ def plot2d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
     if save_bool or plot_duplicates:
         arrays2d[masterkey] = arr
         plt.plot(arr)
+        splitname = masterkey.split("_")[0]
+        if splitname in naming_dict.keys():
+            masterkey = naming_dict[splitname]+ "_".join(masterkey.split("_")[1:])     
         plt.title(masterkey)
         plt.savefig(f'{path}/{masterkey}.png')
         plt.clf()
@@ -108,4 +144,3 @@ def all(name: str, object, longprint : bool, plot_duplicates : bool):
     write(name, object)
     run(name, longprint)
     plot(name, longprint, plot_duplicates)
-
