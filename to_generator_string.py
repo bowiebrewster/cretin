@@ -124,6 +124,7 @@ class Text_generator():
         if control[3]:
             string += '\n edits'
         string += '\n\ndump all'
+
         return string
     
     def pop_switches(self):

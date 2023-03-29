@@ -1,7 +1,7 @@
 from importlib import reload
 import numpy as np
 import matplotlib.pyplot as plt
-import h5py, os, glob
+import h5py, os, glob, shutil
 import generator_object, to_generator_string, search, paths #these python classes should be in the same folder as cretin_main
 for obj in [generator_object, to_generator_string, search, paths]:
     reload(obj)
@@ -44,8 +44,9 @@ def plot(name : str, longprint : bool, plot_duplicates : bool):
 
     with h5py.File(fullpath, 'r') as f:
         path = path_test + name + '/images'
-        if not os.path.exists(path):
-            os.mkdir(path)
+        if os.path.exists(path):
+            shutil.rmtree(path) 
+        os.mkdir(path)
             
         print(f'plotting {name} too {path}')
 
