@@ -138,26 +138,23 @@ class User_input():
 
         self.source_bound = [type, node_ir, node_1, node_2, node3]
 
-    def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, x_maxima : list, y_maxima : list = None, z_maxima : list = None):
-        list_input_requirement([x_maxima, y_maxima, z_maxima])
+    def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, laser_intensities : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.sources.append(["laser", laser_wavelength, option_1, option_2, x_maxima, y_maxima, z_maxima])
+        self.sources.append(["laser", laser_wavelength, option_1, option_2, laser_intensities, nodes])
     
-    def source_jbndry(self, index : float, E_min : float, E_max : float, option_1 : str, option_2 : str, x_maxima : list, y_maxima : list = None, z_maxima : list = None):
+    def source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
-        list_input_requirement([x_maxima, y_maxima, z_maxima])
 
-        self.sources.append(['jbndry',index, E_min, E_max, option_1, option_2, x_maxima, y_maxima, z_maxima])
+        self.sources.append(['jbndry',index, E_range, option_1, option_2, values, nodes])
 
-    def source_jnu(self, E_min, E_max, option_1 : str, option_2 : str, x_maxima : list, y_maxima : list = None, z_maxima : list = None):
+    def source_jnu(self, E_range : list, option_1 : str, option_2 : str, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
-        list_input_requirement([x_maxima, y_maxima, z_maxima])
 
-        self.sources.append(['jnu', E_min, E_max, option_1, option_2, x_maxima, y_maxima, z_maxima])
+        self.sources.append(['jnu', E_range, option_1, option_2, nodes])
 
     def source_rswitch(self, c_is_inf : bool = None, assume_LTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 

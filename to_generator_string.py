@@ -101,14 +101,20 @@ class Text_generator():
         return string
     
     def sources(self):
-        if 'sources' in self.dict:
-            string = self.start_chapter('Sources')
-            sources = self.user_input.sources
-            for source in sources:
-                if source[0] in ['laser','jnu','jbndry']:
-                    string += f'\n source {source[0]} {source[1]}x {self.ilts(source[2:-1])}'
-                else:
-                    string +=  '\n ' + self.ilts(source)
+        if 'sources' not in self.dict:
+            return ''
+
+        string = self.start_chapter('Sources')
+        sources = self.user_input.sources
+        for source in sources:
+            if source[0] == 'laser':
+                string += f'source {source[0]} {source[1]}x {source[2]} {self.ilts(source[3])} {self.ilts(source[-1])}'
+            elif source[0]== 'jbndry':
+                string += f'source {source[0]} {source[1]} {self.ilts(source[2])} {source[3]} {source[4]} {self.ilts(source[-2])} {self.ilts(source[-1])}'
+            elif source[0]== 'jnu':
+                string += f'source {source[0]} {self.ilts(source[1])} {source[2]} {source[3]} {self.ilts(source[-1])}'
+            else:
+                raise Exception("Source must be type 'jbndry', 'jnu' or 'laser' ")
 
         return string 
     
