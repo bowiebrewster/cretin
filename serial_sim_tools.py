@@ -12,7 +12,6 @@ for obj in [generator_object, to_generator_string, search, paths]:
 # returns all possible combinations of the entries in those vectors. 
 # for example input array = [[a1,a2,a3],[b1,b2]] returns [[a1,b1],[a1,b2],[a2,b1],[a2,b2],[a3,b1],[a3,b2]]
 def combinatorics(arr):
-
     if len(arr) == 0:
         return [[]]
     else:
@@ -34,7 +33,6 @@ def dump_path(name: str):
 def savedict(path):
     dictio = {}
     with h5py.File(path, 'r') as f:
-
         for key, value in f.items():
             arr = np.array(f[key])
             dictio[key] = arr
@@ -58,4 +56,3 @@ def check_dependancy(path_original:str, path_compare:str):
         
     return comparison_dic
     
-print(check_dependancy('trial0','trial1'))

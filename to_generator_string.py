@@ -8,7 +8,7 @@ class Text_generator():
     # generates a "chapter" string in the generator file
     def start_chapter(self, name : str):
         deliniator = 'c ------------------------------------------------------------'
-        header = f'{deliniator} \nc   {name}\n{deliniator}\n'
+        header = f'\n{deliniator} \nc   {name}\n{deliniator}\n'
         return header
     
     # int list to string
