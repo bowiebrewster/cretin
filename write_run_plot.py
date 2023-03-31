@@ -107,25 +107,56 @@ naming_dict = {
 }
 
 def plot3d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr):
-    save_bool = True
-    for key, array in arrays3d.items():
-        if np.shape(array) == np.shape(arr):
-            if np.allclose(arr, array):
-                save_bool = False
-                if longprint: print(f"{masterkey} is identical to other array")
+    collapse = are_all_vectors_identical(arr)
+    if collapse == 'rows':
+        vector = arr[0]
+        plot2d(path, masterkey, longprint, plot_duplicates, vector)
+    elif collapse == 'columns':
+        vector = arr[:, 0]
+        plot2d(path, masterkey, longprint, plot_duplicates, vector)
 
-    if save_bool or plot_duplicates:
-        arrays3d[masterkey] = arr
-        fig, ax = plt.subplots()
-        im = ax.imshow(arr)
-        splitname = masterkey.split("_")[0]
-        if splitname in naming_dict.keys():
-            masterkey = naming_dict[splitname]+ "_".join(masterkey.split("_")[1:])
-        ax.set_title(masterkey)
+    else:        
+        save_bool = True
+        for key, array in arrays3d.items():
+            if np.shape(array) == np.shape(arr):
+                if np.allclose(arr, array):
+                    save_bool = False
+                    if longprint: print(f"{masterkey} is identical to other array")
 
-        fig.savefig(f'{path}/{masterkey}.png')
-        fig.clf(); 
-        plt.close()
+        if save_bool or plot_duplicates:
+            arrays3d[masterkey] = arr
+            fig, ax = plt.subplots()
+            im = ax.imshow(arr)
+            splitname = masterkey.split("_")[0]
+            if splitname in naming_dict.keys():
+                masterkey = naming_dict[splitname]+ "_".join(masterkey.split("_")[1:])
+            ax.set_title(masterkey)
+
+            fig.savefig(f'{path}/{masterkey}.png')
+            fig.clf(); 
+            plt.close()
+
+# for data that is represented as 3d but really should be 2d
+def are_all_vectors_identical(arr):
+    """
+    Check if all vectors in a numpy array are identical.
+    """
+    # Check that the array has at least one row
+    if arr.shape[0] < 1:
+        return False
+    
+    # Get the first row as a reference vector
+    ref_vector = arr[0]
+    ref_column = arr[:, 0]
+    # Check if all other vectors are equal to the reference vector
+    if np.all(np.equal(arr, ref_vector), axis=1).all():
+        return 'rows'
+    
+    elif np.all(np.equal(arr, ref_column.reshape(-1, 1)), axis=0).all():
+        return 'columns'
+    
+    else:
+        return True
 
 def plot2d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr):
     save_bool = True 
