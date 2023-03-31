@@ -15,7 +15,7 @@ def write(name : str, object):
         os.makedirs(paths.to_folder_test() + name)
 
     file_loc = paths.to_folder_test() + name + '/' + name + '.gen'
-    print(f'writing too {file_loc}')
+    print(f'\nwriting too {file_loc}')
     with open(file_loc, 'w') as f:
         for x in string:
             f.write(str(x))
@@ -58,19 +58,22 @@ def plot(name : str, longprint : bool, plot_duplicates : bool):
             arr = np.array(f[key])
             if longprint: 
                 print(f'plot nr \t {counter} \t {key} \t {np.shape(arr)}')
+            
+            if key == 'model_1' or key == 'previous':
+                pass
 
-            if len(arr.shape) == 2:
+            elif len(arr.shape) == 2:
                 plot3d(path, key, longprint, plot_duplicates, arr)
 
-            if len(arr.shape) == 1 and len(arr) > 0:
+            elif len(arr.shape) == 1 and len(arr) > 0:
                 plot2d(path, key, longprint, plot_duplicates, arr)
 
-            if len(arr.shape) > 2:
+            elif len(arr.shape) > 2:
                 print(f'{key} has dimension {len(arr.shape)} and has not been')
 
             counter += 1
 
-        print(f'plots {name} finished at location {path}\n')
+        print(f'plots {name} finished at location {path}')
 
 
 

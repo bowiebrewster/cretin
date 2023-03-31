@@ -22,6 +22,7 @@ def combinatorics(arr):
                 result.append([item] + combination)
         return result
     
+# path to the dump file
 def dump_path(name: str):
     path_test = paths.to_folder_test()
     os.chdir(path_test + '/' + name)
@@ -29,13 +30,32 @@ def dump_path(name: str):
     fullpath = path_test + '/' + name + '/' + file_list[0]
     return fullpath
 
-dictio = {}
+# extracting the data from the dumpfile
+def savedict(path):
+    dictio = {}
+    with h5py.File(path, 'r') as f:
 
-def check_dependancy(path_original:str = 'trial0', path_compare:str = 'trial1'):
-    dump_original, dump_compare =  dump_path(path_original),  dump_path(path_compare)
-
-    with h5py.File(dump_original, 'r') as f:
-        counter = 0
-        dictio = f
         for key, value in f.items():
             arr = np.array(f[key])
+            dictio[key] = arr
+            
+    return dictio
+
+# checking diffrence between dicionaries
+def check_dependancy(path_original:str, path_compare:str):
+    global dict_original, dict_compare
+    dict_original, dict_compare = savedict(dump_path(path_original)), savedict(dump_path(path_compare))
+    
+    comparison_dic = {}
+    for orignal_key, orignal_value in dict_original.items():
+        compare_value = dict_compare[orignal_key]
+        
+        try:
+            comparison_dic[orignal_key] = np.allclose(orignal_value, compare_value)
+        except:
+            if not(orignal_key == 'model_1' or orignal_key == 'previous'):
+                comparison_dic[orignal_key] = 'comparison error'
+        
+    return comparison_dic
+    
+print(check_dependancy('trial0','trial1'))

@@ -108,13 +108,15 @@ class Text_generator():
         sources = self.user_input.sources
         for source in sources:
             if source[0] == 'laser':
-                string += f'source {source[0]} {source[1]}x {source[2]} {self.ilts(source[3])} {self.ilts(source[-1])}'
+                string += f'source {source[0]} {source[1]}x {source[2]} {source[3]} {self.ilts(source[4])} {self.ilts(source[-1])}'
             elif source[0]== 'jbndry':
                 string += f'source {source[0]} {source[1]} {self.ilts(source[2])} {source[3]} {source[4]} {self.ilts(source[-2])} {self.ilts(source[-1])}'
             elif source[0]== 'jnu':
                 string += f'source {source[0]} {self.ilts(source[1])} {source[2]} {source[3]} {self.ilts(source[-1])}'
             else:
                 raise Exception("Source must be type 'jbndry', 'jnu' or 'laser' ")
+            
+            string += '\n'
 
         return string 
     
