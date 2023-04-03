@@ -299,5 +299,3 @@ def interger_input_requirement(inter : int, options : list):
     if inter not in options:
         fstrin = f'{inter} is not one of: {options}'
         raise Exception(fstrin)
-
-element_input_requirement('Sn')
