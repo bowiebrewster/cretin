@@ -87,8 +87,6 @@ class User_input():
             raise Exception(f'geometry setting {self.geometry} makes nodes call obsolete')
         
         string_input_requirement(coordinate, ['r','x','y','x'])
-        if coordinate == 'r' and self.geometry not in ['cylinder','sphere']:
-            raise Exception("coordinate r is only compatible with 'cylinder' or 'sphere'")
         if coordinate == 'r' and self.dimension != 1:
             raise Exception("coordinate r is only compatible with 1d")
 
