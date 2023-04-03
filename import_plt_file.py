@@ -3,6 +3,7 @@ import generator_object, to_generator_string, search, paths, write_run_plot, ser
 for obj in [generator_object, to_generator_string, search, paths, write_run_plot, serial_sim_tools]:
     reload(obj)
 import numpy as np
+import os, shutil
 import matplotlib.pyplot as plt
 # this is an absolute monstrosity of string manipulation, do not judge me father.
 
@@ -48,35 +49,43 @@ def restructure(line : str, count : int):
 
 
 def txt_to_plot(name : str):
-    folder = f'{path}/{name}/{name}'
-    with open(f'{folder}.plt') as f:
+    folder = f'{path}{name}'
+
+    with open(f'{folder}/{name}.plt') as f:
         lines = f.readlines()
 
         
         for count, line in enumerate(lines):
             restructure(line, count)
 
+    
+    if os.path.exists(f'{folder}/images'):
+        shutil.rmtree(f'{folder}/images') 
+    os.mkdir(f'{folder}/images')
 
     for key, value in data.items():
 
-        value = np.array(value)
-        value = value.astype(np.float)
-        #print(key, value, '\n\n')
-        col_count = 0
-        for column in value.T:
-            if col_count == 0:
-                col0 = column
+        value = np.array(value, dtype=object)
 
-            else:
-                plt.plot(col0, column)
+        try:
+            value = value.astype('float')
 
-                plt.title(key)
-                plt.savefig(f'{folder}/{key}.png')
-                plt.clf()
-                plt.close()
+            col_count = 0
+            for column in value.T:
+                if col_count == 0:
+                    col0 = column
 
-
-            col_count += 1
+                else:
+                    plt.plot(col0, column)
+                    plt.title(key)
+                    plt.savefig(f'{folder}/images/{str(key[0])}.png')
+                    plt.clf()
+                    plt.close()
 
 
-txt_to_plot('lasfoam')
+                col_count += 1
+        except:
+            print(f'error with {key}')
+            
+    print(f'finished writing too {folder}/images')
+
