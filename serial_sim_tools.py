@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 for obj in [generator_object, to_generator_string, search, paths, write_run_plot]:
     reload(obj)
-
+naming_dict = write_run_plot.naming_dict
 
 # takes as an arugment a (jagged) array consisting of k vectors of size k_i
 # returns all possible combinations of the entries in those vectors. 
@@ -56,10 +56,6 @@ def check_dependancy(path_original:str, path_compare:str):
                 comparison_dic[orignal_key] = 'comparison error'
         
     return comparison_dic
-    
-
-naming_dict = write_run_plot.naming_dict
-
 
 def compare_runs(org_trial: str, curr_trial: str, compare_dict : dict):
 
@@ -71,9 +67,6 @@ def compare_runs(org_trial: str, curr_trial: str, compare_dict : dict):
         changed_lis = [naming_dict[setpiece] for setpiece in changed_set if setpiece in naming_dict]
         error_lis = [naming_dict[setpiece] for setpiece in error_set if setpiece in naming_dict]
         print(f'comparison of {org_trial} and {curr_trial}, identical arrays: {identical_lis}\n changed arrays: {changed_lis}\n comparision error arrays: {error_lis}')
-
-
-
 
 def plot(name : str, plot_duplicates : bool):
     # finding d file
@@ -95,7 +88,10 @@ def plot(name : str, plot_duplicates : bool):
         for key, value in f.items():
             arr = np.array(f[key])
 
-            if key == 'model_1' or key == 'previous':
+            # these never need to be plot
+            if key in ['model_1','previous','ai','zi','model_id']:
+                pass
+            elif key.split('_')[0] in ['r', 'u', 'regmap', 'iso']:
                 pass
 
             elif len(arr.shape) == 2:
@@ -108,7 +104,6 @@ def plot(name : str, plot_duplicates : bool):
                 print(f'{key} has dimension {len(arr.shape)} and has not been')
 
             counter += 1
-
 
 def plot3d(name: str, path:str, masterkey:str,  plot_duplicates : bool, arr):
     collapse = are_all_vectors_identical(arr)
@@ -130,7 +125,6 @@ def plot3d(name: str, path:str, masterkey:str,  plot_duplicates : bool, arr):
         if save_bool or plot_duplicates:
             arrays3d[masterkey] = arr
 
-
 def plot2d(name : str, path:str, masterkey:str,  plot_duplicates : bool, arr):
     save_bool = True 
     for key, array in arrays2d.items():
@@ -142,11 +136,9 @@ def plot2d(name : str, path:str, masterkey:str,  plot_duplicates : bool, arr):
     if save_bool or plot_duplicates:
         arrays2d[masterkey] = arr
 
-
+# Check if all vectors in a numpy array are identical.
 def are_all_vectors_identical(arr):
-    """
-    Check if all vectors in a numpy array are identical.
-    """
+
     # Check that the array has at least one row
     if arr.shape[0] < 1:
         return False
@@ -163,7 +155,6 @@ def are_all_vectors_identical(arr):
     
     else:
         return True
-
 
 all_trials_dict = {}
 
@@ -196,6 +187,18 @@ def plot_all(foldername:str, trials : list):
         for key in set_3d:
             all(path, key, trials)
 
+axis_dict = {
+    'ne' : 'nodes',
+    'ni' : 'nodes',
+    'r' : 'nodes',
+    'te' : 'nodes',
+    'u' : 'nodes',
+    'eav': 'ebins',
+    'emis': 'ebins',
+    'ev': 'ebins',
+    'jnu': 'ebins',
+    'kappa': 'ebins',
+}
 
 def all(path: str, key: str, trials:list):
     legend = []
@@ -206,8 +209,46 @@ def all(path: str, key: str, trials:list):
             plt.plot(arr)
             legend.append(trial)
     plt.legend(legend)
-    plt.title(key)
-    plt.savefig(f'{path}/{key}.png')
+
+    realkey = key.split('_')[0]
+
+    if realkey in axis_dict.keys():
+        plt.xlabel(axis_dict[realkey])
+    
+    try:
+        start = xaxis_delimitter(arr)[0]
+        end = xaxis_delimitter(arr)[1]
+        plt.xlim(start - 1, end + 1)
+        pass
+    except:
+        pass
+
+    index = '_'.join(key.split('_')[1:])
+    if realkey in naming_dict.keys():
+        realkey = naming_dict[realkey]+index
+
+
+    plt.title(realkey)
+    plt.savefig(f'{path}/{realkey}.png')
     plt.clf()
     plt.close()
 
+def xaxis_delimitter(lst):
+    ranges = []
+    start_idx = None
+    for i in range(len(lst)):
+        if lst[i] != 0 and start_idx is None:
+            # Start of a new range
+            start_idx = i
+        elif lst[i] == 0 and start_idx is not None:
+            # End of the current range
+            ranges.append((start_idx, i-1))
+            start_idx = None
+    if start_idx is not None:
+        # End of the list is also end of the last range
+        ranges.append((start_idx, len(lst)-1))
+
+    start = ranges[0][0]
+    end = ranges[-1][-1]
+
+    return start, end
