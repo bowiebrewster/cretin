@@ -23,15 +23,15 @@ def combinatorics(arr):
         return result
     
 # path to the dump file
-def dump_path(name: str):
+def dump_path(name : str):
     path_test = paths.to_folder_test()
-    os.chdir(path_test + '/' + name)
+    os.chdir(f'{path_test}/{name}')
     file_list = glob.glob('*.d*')
-    fullpath = path_test + '/' + name + '/' + file_list[0]
+    fullpath = f'{path_test}/{name}/{file_list[0]}'
     return fullpath
 
 # extracting the data from the dumpfile
-def savedict(path):
+def savedict(path : str):
     dictio = {}
     with h5py.File(path, 'r') as f:
         for key, value in f.items():
@@ -41,21 +41,21 @@ def savedict(path):
     return dictio
 
 # checking diffrence between dicionaries
-def check_dependancy(path_original:str, path_compare:str):
-    global dict_original, dict_compare
-    dict_original, dict_compare = savedict(dump_path(path_original)), savedict(dump_path(path_compare))
+def check_dependancy(path_original : str, path_compare : str):
+    global primary_dic, secondary_dic
+    primary_dic, secondary_dic = savedict(dump_path(path_original)), savedict(dump_path(path_compare))
     
-    comparison_dic = {}
-    for orignal_key, orignal_value in dict_original.items():
-        compare_value = dict_compare[orignal_key]
+    compare_dic = {}
+    for orignal_key, orignal_value in primary_dic.items():
+        secondary_value = secondary_dic[orignal_key]
         
         try:
-            comparison_dic[orignal_key] = np.allclose(orignal_value, compare_value)
+            compare_dic[orignal_key] = np.allclose(orignal_value, secondary_value)
         except:
             if not(orignal_key == 'model_1' or orignal_key == 'previous'):
-                comparison_dic[orignal_key] = 'comparison error'
+                compare_dic[orignal_key] = 'comparison error'
         
-    return comparison_dic
+    return compare_dic
 
 def compare_runs(org_trial: str, curr_trial: str, compare_dict : dict):
 
@@ -73,6 +73,9 @@ def plot(name : str, plot_duplicates : bool):
     path_test = paths.to_folder_test()
     os.chdir(path_test + '/' + name)
     file_list = glob.glob('*.d*')
+
+    if len(file_list) == 0:
+        raise Exception(f'{name} file list does not contain dump file but does contain {os.listdir()}')
     fullpath = path_test + '/' + name + '/' + file_list[0]
 
     with h5py.File(fullpath, 'r') as f:
@@ -82,9 +85,7 @@ def plot(name : str, plot_duplicates : bool):
             shutil.rmtree(path) 
         os.mkdir(path)
             
-
         counter = 0
-
         for key, value in f.items():
             arr = np.array(f[key])
 
@@ -94,18 +95,21 @@ def plot(name : str, plot_duplicates : bool):
             elif key.split('_')[0] in ['r', 'u', 'regmap', 'iso']:
                 pass
 
+            elif len(arr.shape) == 0:
+                pass
+
             elif len(arr.shape) == 2:
                 plot3d(name, path, key, plot_duplicates, arr)
 
             elif len(arr.shape) == 1 and len(arr) > 0:
                 plot2d(name, path, key, plot_duplicates, arr)
 
-            elif len(arr.shape) > 2:
-                print(f'{key} has dimension {len(arr.shape)} and has not been')
+            else:
+                print(f'strange array with shape {arr.shape} has not been plot')
 
             counter += 1
 
-def plot3d(name: str, path:str, masterkey:str,  plot_duplicates : bool, arr):
+def plot3d(name : str, path : str, masterkey : str,  plot_duplicates : bool, arr):
     collapse = are_all_vectors_identical(arr)
     if collapse == 'rows':
         vector = arr[0]
@@ -121,7 +125,6 @@ def plot3d(name: str, path:str, masterkey:str,  plot_duplicates : bool, arr):
                 if np.allclose(arr, array):
                     save_bool = False
                     
-
         if save_bool or plot_duplicates:
             arrays3d[masterkey] = arr
 
@@ -132,7 +135,6 @@ def plot2d(name : str, path:str, masterkey:str,  plot_duplicates : bool, arr):
             if np.allclose(arr, array):
                 save_bool = False
                
-
     if save_bool or plot_duplicates:
         arrays2d[masterkey] = arr
 
@@ -158,7 +160,7 @@ def are_all_vectors_identical(arr):
 
 all_trials_dict = {}
 
-def plot_all(foldername:str, trials : list):
+def plot_all(foldername : str, trials : list):
     for trial in trials:
         global arrays2d, arrays3d
         arrays2d, arrays3d = {}, {}
@@ -219,7 +221,6 @@ def all(path: str, key: str, trials:list):
         start = xaxis_delimitter(arr)[0]
         end = xaxis_delimitter(arr)[1]
         plt.xlim(start - 1, end + 1)
-        pass
     except:
         pass
 
@@ -233,6 +234,7 @@ def all(path: str, key: str, trials:list):
     plt.clf()
     plt.close()
 
+# for plots that include a lot of zeros we essentially zoom on the x axis using the delimitters
 def xaxis_delimitter(lst):
     ranges = []
     start_idx = None

@@ -42,20 +42,19 @@ class Text_generator():
         for region in regions:
             region0, element_of_region, material_of_region, rho_of_region, background_of_region = region
             strings0 = ['region','regionkl','regionklm']
-            string += '\n'+strings0[region0[0]-1] + ' '+ self.ilts(region0[1]) + ' '+ self.ilts(region0[2:])
+            string += f'\n{strings0[region0[0]-1]} {self.ilts(region0[1])} {self.ilts(region0[2:])}'
 
             for el in element_of_region:
-                string += '\n\t' + 'element ' + self.ilts(el)
+                string += f'\n\telement {self.ilts(el)}'
 
             for mat in material_of_region:
-                string += '\n\t' + 'material ' + self.ilts(mat)
+                string += f'\n\tmaterial {self.ilts(mat)}'
 
             for rho in rho_of_region:
-                string += '\n\t' + 'rho ' + str(rho_of_region[0])
+                string += f'\n\trho {str(rho_of_region[0])}'
 
             for bac in background_of_region:
-                string += '\n\t' + 'background ' + self.ilts(background_of_region[0])
-            
+                string += f'\n\tbackground {self.ilts(background_of_region[0])}'
         return string
 
     def geometry(self):
