@@ -136,11 +136,11 @@ class User_input():
 
         self.source_bound = [type, node_ir, node_1, node_2, node3]
 
-    def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, laser_intensities : list, nodes : list):
+    def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.sources.append(["laser", laser_wavelength, option_1, option_2, laser_intensities, nodes])
+        self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes])
     
     def source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
@@ -148,11 +148,11 @@ class User_input():
 
         self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes])
 
-    def source_jnu(self, E_range : list, option_1 : str, option_2 : str, nodes : list):
+    def source_jnu(self, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.sources.append(['jnu', E_range, option_1, option_2, nodes])
+        self.sources.append(['jnu', E_range, option_1, option_2, values, nodes])
 
     def source_rswitch(self, c_is_inf : bool = None, assume_LTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
@@ -189,7 +189,8 @@ class User_input():
 
     def popular_switches(self, include_degeneracy : str = None, timestep_type : str = None, continuum_transfer : str = None,
                           continuum_transfer_evolves_temp : bool = False, timestep_between_snapshot : int = None, 
-                          kinematics : str = None, initialization_control : str = None, continuum_lowering_control  : str = None):
+                          kinematics : str = None, initialization_control : str = None, continuum_lowering_control  : str = None,
+                          raytrace : bool = None):
         
         # using the gather_data.ipynb file i've searched for the most common switches 
         if include_degeneracy == None:
@@ -198,31 +199,31 @@ class User_input():
             include_degeneracy_dict = {'include electron degeneracy' : .5,' ignore additional correction for ionizations' : -.5,
                                        'integrate collisional ionizations numerically': 1.5,'integrate collisional excitations numerically': 2.5}
             string_input_requirement(include_degeneracy, include_degeneracy_dict.keys())
-            string0 = 'switch 151 '+str(include_degeneracy_dict[include_degeneracy])
+            string0 = f'switch 151 {str(include_degeneracy_dict[include_degeneracy])}'
 
         if timestep_type == None:
             string1 = None
         else:
             time_step_dict = {'use constant timesteps' : -1, 'use_dynamic_timesteps' : 1}
             string_input_requirement(timestep_type, time_step_dict.keys())   
-            string1 = 'switch 29 '+str(time_step_dict[timestep_type])
+            string1 = f'switch 29 {str(time_step_dict[timestep_type])}'
 
         if continuum_transfer == None:
             string2 = None
         else:
-            continuum_transfer_dict = {'do steady-state continuum transfer': .5, 'do time-dependent continuum transfer':-.5, '1-d: use Feautrier formalism, integral formalism otherwise': 1}
+            continuum_transfer_dict = {'do steady-state continuum transfer': .5, 'do time-dependent continuum transfer':-.5, 'do steady-state and use Feautrier formalism': 1, 'do steady-state and use integral formalism formalism':2}
             string_input_requirement(continuum_transfer, continuum_transfer_dict.keys())   
-            string2 = 'switch 36 '+str(continuum_transfer_dict[continuum_transfer])
+            string2 = f'switch 36 {str(continuum_transfer_dict[continuum_transfer])}'
 
         string3 =  'switch 100 1' if continuum_transfer_evolves_temp == True else None
-        string4 = None if timestep_between_snapshot == None else 'switch 30 ' + str(timestep_between_snapshot)  
+        string4 = None if timestep_between_snapshot == None else f'switch 30 {str(timestep_between_snapshot)}'
 
         if kinematics == None:
             string5 = None
         else:
             kinematics_dict = {'steady-state kinetics': 0, 'time-dependent kinetics':.5, 'use approx. LTE and QSS distributions to choose LTE or NLTE': 1.5, 'calculate approx. LTE and QSS distribution': -1, 'no kinetics':-1.5}
             string_input_requirement(kinematics, kinematics_dict.keys())   
-            string5 = 'switch 25 '+str(kinematics_dict[kinematics])
+            string5 = f'switch 25  {str(kinematics_dict[kinematics])}'
 
         if initialization_control == None:
             string6 = None
@@ -230,36 +231,68 @@ class User_input():
             initialization_control_dict = {'LTE at fixed electron density':-1,' LTE at fixed ion density':0,'steady-state w/ radiation transfer':1,
                                            'steady-state kinetics w/o radiation transfer':2,': no kinetics, broadcast boundary radiation':3, 'none':4}
             string_input_requirement(initialization_control, initialization_control_dict.keys())
-            string6 = 'switch 28 '+ str(initialization_control_dict[initialization_control]) if initialization_control != None else None
+            string6 = f'switch 28 {str(initialization_control_dict[initialization_control])}' if initialization_control != None else None
         
-        if initialization_control == None:
+        if continuum_lowering_control == None:
             string7 = None
         else:
             continuum_lowering_control_dict = {'approximate accounting for missing Rydberg levels':-1,' no continuum lowering':0,'Stewart-Pyatt with formula for degeneracy lowering':1,
                                       'Stewart-Pyatt with microfield degeneracy lowering':2,'microfield degeneracy lowering w/o continuum lowering':3,
                                       'SP/EK w/o degeneracy lowering':5,' use maximum of SP/EK and approximate accounting':10}
 
-            string7 = 'switch 55 '+ str(continuum_lowering_control_dict[continuum_lowering_control]) if continuum_lowering_control != None else None
+            string7 = f'switch 55 {str(continuum_lowering_control_dict[continuum_lowering_control])}' if continuum_lowering_control != None else None
+
+        if continuum_lowering_control == None:
+            string7 = None
+        else:
+            continuum_lowering_control_dict = {'approximate accounting for missing Rydberg levels':-1,' no continuum lowering':0,'Stewart-Pyatt with formula for degeneracy lowering':1,
+                                      'Stewart-Pyatt with microfield degeneracy lowering':2,'microfield degeneracy lowering w/o continuum lowering':3,
+                                      'SP/EK w/o degeneracy lowering':5,' use maximum of SP/EK and approximate accounting':10}
+
+            string7 = f'switch 55 {str(continuum_lowering_control_dict[continuum_lowering_control])}' if continuum_lowering_control != None else None
         
-        self.pop_switches = [string0, string1, string2, string3, string4, string5, string6, string7]
+
+        if raytrace == None or raytrace == False:
+            string8 = None
+        else:
+            string8 = 'switch 45 1'
+
+
+
+        self.pop_switches = [string0, string1, string2, string3, string4, string5, string6, string7, string8]
 
     # TODO
-    def pop_paramters():
+    def pop_parameters():
         pass
 
     # TODO
-    def other_switches(self):
-        pass
-        """
-        28 1 ! steady-state initialization                   8
-        100 1 ! do radiation                                 8
-        55 1 ! do continuum lowering                         7
-        11 1 ! make ascii plot file                          6
-        38 1 ! symmetric line profiles                       6
-        44 10 ! maximum # of iterations                      5
-        111 1 ! iterate zones independently                  5
-        """
+    def r_switches(self, radiation_transfer_algorithm : str = None, ion_specific_heat : str = None, LTE_treatment : str = None):
+        if radiation_transfer_algorithm == None:
+            string1 = None
+        else:
+            radiation_transfer_dict = {'do flux-limited diffusion (1d)': 0.5, 'do transport using Feautrier formalism (1d)':-1, 
+                               'do transport using integral formalism (1d)': -2, 'use iccg (2d)': 1, 'use ilur (2d)':2,
+                               'gmres with diagonal preconditioning (2d)':3,'use gmres with iccg preconditioning (2d)':4,
+                               'use gmres with ilur preconditioning (2d)':5}
+            string_input_requirement(radiation_transfer_algorithm, radiation_transfer_dict.keys())   
+            string1 = f'rswitch 1 {str(radiation_transfer_dict[radiation_transfer_algorithm])}'
 
+
+        if ion_specific_heat == None:
+            string2 = None
+        else:
+            ion_specific_heat_dict = {'ion specific heat is like ideal gas': 1, 'ion specific heat is in line with EOS' : 0}
+            string_input_requirement(ion_specific_heat, ion_specific_heat_dict.keys())   
+            string2 = f'rswitch 14 {str(ion_specific_heat_dict[ion_specific_heat])}'
+
+
+        if LTE_treatment == None:
+            string3 = None
+        else:
+            LTE_treatment_dict = {'Assume LTE': 0, 'Non LTE and do not include derivatives w.r.t. Jn':1, 
+                               'Non LTE and include derivatives w.r.t. Jn':2}
+            string_input_requirement(LTE_treatment, LTE_treatment_dict.keys())   
+            string3 = f'rswitch 20  {str(LTE_treatment_dict[LTE_treatment])}'
 
 def list_input_requirement(lis):
     for input in lis: 
@@ -279,8 +312,8 @@ def string_input_requirement(string: str, options: list):
 def element_input_requirement(element: str):
     if 'element_list' not in globals():
         global element_list
-        df = pd.read_csv(paths.to_folder_cretin()+'periodic_table.csv')
-        element_list = df['Symbol'].to_string(index=False)
+        df = pd.read_csv(f'{paths.to_folder_cretin()}periodic_table.csv')
+        element_list = df['Symbol'].to_string(index = False)
 
     new = []
     for entry in element_list:
