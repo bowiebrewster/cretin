@@ -119,22 +119,17 @@ class User_input():
     def radiation_aprd(self, voigt_paramters : list):
         self.sources_aprd.append(voigt_paramters)
     
-    def source_boundary(self, type : str, node_ir : float = None, node_1 : list = None, node_2 : list = None, node3 : list = None):
+    def source_boundary(self, package: str, type : str, nodes : list, value : float , mult : float = None):
+        string_input_requirement(package, ['radiation', 'conduction', 'hydro', 'velocity', 'pressure', 'divertor', 'current','all'])
         string_input_requirement(type, ['streaming', 'milne','value'])
-        if node_ir != None and node_1 == None and node_2 == None and node3 == None:
-            pass #type1
-        elif node_ir == None and node_1 != None and node_2 != None and node3 == None:
-            pass #type2
-        elif node_ir == None and node_1 != None and node_2 != None and node3 != None:
-            pass #type3
-        else:
+        if len(nodes) not in [1,4,6]:
             raise Exception(""" the only allowed combinations are as follows:
-            1) boundary package type ir (history id) multiplier value or
-            2) boundary package type [k1 k2] [l1 l2] (history id) value or
-            3) boundary package type [k1 k2] [l1 l2] [m1 m2] (history id) value
+            1) boundary package type [ir] (history id) multiplier value or
+            2) boundary package type [k1 k2 l1 l2] (history id) value or
+            3) boundary package type [k1 k2 l1 l2 m1 m2] (history id) value
             """)
 
-        self.source_bound = [type, node_ir, node_1, node_2, node3]
+        self.source_bound = [package, type, nodes, mult, value]
 
     def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
@@ -142,7 +137,7 @@ class User_input():
 
         self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes])
     
-    def source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
+    def source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
@@ -154,6 +149,16 @@ class User_input():
 
         self.sources.append(['jnu', E_range, option_1, option_2, values, nodes])
 
+
+    def laser(self, index: int, wavelength : float, option_1 : str, option_2 : str, value : float, mul: float)
+        self.las = [index, wavelength, option_1, option_2, value, mul]
+        self.lasray = []
+
+    def raytrace(self, )
+
+
+
+
     def source_rswitch(self, c_is_inf : bool = None, assume_LTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
                        multi_group_acceleration : str = None, use_flux_limiting : bool = None):
@@ -163,7 +168,7 @@ class User_input():
         rad_2d_dict = {'use iccg':1, 'use ilur':2}
 
         if radiation_transfer_algorithm1d != None and radiation_transfer_algorithm2d != None:
-            raise Exception("You obviously can not simulate in 1d and 2d at the same time")
+            raise Exception("Dimensionality incompatible")
         elif radiation_transfer_algorithm1d == None and radiation_transfer_algorithm2d == None:
             string2 = None
         elif radiation_transfer_algorithm1d != None and radiation_transfer_algorithm2d == None:
@@ -261,38 +266,6 @@ class User_input():
 
         self.pop_switches = [string0, string1, string2, string3, string4, string5, string6, string7, string8]
 
-    # TODO
-    def pop_parameters():
-        pass
-
-    # TODO
-    def r_switches(self, radiation_transfer_algorithm : str = None, ion_specific_heat : str = None, LTE_treatment : str = None):
-        if radiation_transfer_algorithm == None:
-            string1 = None
-        else:
-            radiation_transfer_dict = {'do flux-limited diffusion (1d)': 0.5, 'do transport using Feautrier formalism (1d)':-1, 
-                               'do transport using integral formalism (1d)': -2, 'use iccg (2d)': 1, 'use ilur (2d)':2,
-                               'gmres with diagonal preconditioning (2d)':3,'use gmres with iccg preconditioning (2d)':4,
-                               'use gmres with ilur preconditioning (2d)':5}
-            string_input_requirement(radiation_transfer_algorithm, radiation_transfer_dict.keys())   
-            string1 = f'rswitch 1 {str(radiation_transfer_dict[radiation_transfer_algorithm])}'
-
-
-        if ion_specific_heat == None:
-            string2 = None
-        else:
-            ion_specific_heat_dict = {'ion specific heat is like ideal gas': 1, 'ion specific heat is in line with EOS' : 0}
-            string_input_requirement(ion_specific_heat, ion_specific_heat_dict.keys())   
-            string2 = f'rswitch 14 {str(ion_specific_heat_dict[ion_specific_heat])}'
-
-
-        if LTE_treatment == None:
-            string3 = None
-        else:
-            LTE_treatment_dict = {'Assume LTE': 0, 'Non LTE and do not include derivatives w.r.t. Jn':1, 
-                               'Non LTE and include derivatives w.r.t. Jn':2}
-            string_input_requirement(LTE_treatment, LTE_treatment_dict.keys())   
-            string3 = f'rswitch 20  {str(LTE_treatment_dict[LTE_treatment])}'
 
 def list_input_requirement(lis):
     for input in lis: 

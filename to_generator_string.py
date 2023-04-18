@@ -109,13 +109,17 @@ class Text_generator():
             if source[0] == 'laser':
                 string += f'source {source[0]} {source[1]}x {source[2]} {source[3]} {self.ilts(source[4])} {self.ilts(source[-1])}'
             elif source[0]== 'jbndry':
-                string += f'source {source[0]} {source[1]} {self.ilts(source[2])} {source[3]} {source[4]} {self.ilts(source[-2])} {self.ilts(source[-1])}'
+                add = '' if source[-1] == None else self.ilts(source[-1])
+                string += f'source {source[0]} {source[1]} {self.ilts(source[2])} {source[3]} {source[4]} {self.ilts(source[5])} {add}'
             elif source[0]== 'jnu':
-                string += f'source {source[0]} {self.ilts(source[1])} {source[2]} {source[3]} {self.ilts(source[-1])}'
+                string += f'source {source[0]} {self.ilts(source[1])} {source[2]} {source[3]} {self.ilts(source[-2])} {self.ilts(source[-1])}'
             else:
                 raise Exception("Source must be type 'jbndry', 'jnu' or 'laser' ")
             
             string += '\n'
+        bound = self.user_input.source_bound
+        last = '' if bound[-1] == None else bound[-1]
+        string += f'boundary {bound[0]} {bound[1]} {self.ilts(bound[2])} {bound[3]} {last}'
 
         return string 
     
