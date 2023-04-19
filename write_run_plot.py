@@ -7,7 +7,7 @@ for obj in [generator_object, to_generator_string, search, paths]:
     reload(obj)
 
 
-# takes the text string and writes it too the creting generator file
+# takes the text string and writes it to the cretin generator file
 def write(name : str, object):
     string = to_generator_string.Text_generator(object).execute()
 
@@ -15,7 +15,7 @@ def write(name : str, object):
         os.makedirs(paths.to_folder_test() + name)
 
     file_loc = paths.to_folder_test() + name + '/' + name + '.gen'
-    print(f'\nwriting too {file_loc}')
+    print(f'\nwriting to {file_loc}')
     with open(file_loc, 'w') as f:
         for x in string:
             f.write(str(x))
@@ -83,7 +83,7 @@ def plot(name : str, longprint : bool, plot_duplicates : bool):
             shutil.rmtree(path) 
         os.mkdir(path)
             
-        print(f'plotting {name} too {path}')
+        print(f'plotting {name} to {path}')
 
         global arrays2d, arrays3d
         arrays2d, arrays3d = {}, {}
@@ -91,24 +91,29 @@ def plot(name : str, longprint : bool, plot_duplicates : bool):
 
         for key, value in f.items():
             arr = np.array(f[key])
+
+            
             if longprint: 
                 print(f'plot nr \t {counter} \t {key} \t {np.shape(arr)}')
             
-            if key == 'model_1' or key == 'previous' or len(arr.shape) == 0:
+            # these never need to be plot
+            if key in ['model_1','previous','ai','zi','model_id']:
                 pass
-
-            elif len(arr.shape) == 2:
-                plot3d(path, key, longprint, plot_duplicates, arr)
+            elif key.split('_')[0] in ['r', 'u', 'regmap', 'iso']:
+                pass
+            elif len(arr.shape) == 0:
+                pass
 
             elif len(arr.shape) == 1 and len(arr) > 0:
                 plot2d(path, key, longprint, plot_duplicates, arr)
+
+            elif len(arr.shape) == 2 or len(arr.shape) == 3:
+                plot3d(path, key, longprint, plot_duplicates, arr)
 
             else:
                 print(f'{key} has shape {arr.shape} and has not been plot')
 
             counter += 1
-
-        print(f'plots {name} finished at location {path}')
 
 
 def plot3d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr):
