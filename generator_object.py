@@ -150,11 +150,12 @@ class User_input():
         self.sources.append(['jnu', E_range, option_1, option_2, values, nodes])
 
 
-    def laser(self, index: int, wavelength : float, option_1 : str, option_2 : str, value : float, mul: float)
-        self.las = [index, wavelength, option_1, option_2, value, mul]
-        self.lasray = []
+    #def laser(self, index: int, wavelength : float, option_1 : str, option_2 : str, value : float, mul: float):
+    #    self.las = [index, wavelength, option_1, option_2, value, mul]
+    #    self.lasray = []
 
-    def raytrace(self, )
+    #def raytrace(self):
+    #    pass
 
 
 

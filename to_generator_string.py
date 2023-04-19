@@ -117,9 +117,10 @@ class Text_generator():
                 raise Exception("Source must be type 'jbndry', 'jnu' or 'laser' ")
             
             string += '\n'
-        bound = self.user_input.source_bound
-        last = '' if bound[-1] == None else bound[-1]
-        string += f'boundary {bound[0]} {bound[1]} {self.ilts(bound[2])} {bound[3]} {last}'
+        if 'source_bound' in self.dict:
+            bound = self.user_input.source_bound
+            last = '' if bound[-1] == None else bound[-1]
+            string += f'boundary {bound[0]} {bound[1]} {self.ilts(bound[2])} {bound[3]} {last}'
 
         return string 
     

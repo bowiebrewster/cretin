@@ -76,7 +76,7 @@ def plot(name : str, plot_duplicates : bool):
 
     if len(file_list) == 0:
         raise Exception(f'{name} file list does not contain dump file but does contain {os.listdir()}')
-    fullpath = path_test + '/' + name + '/' + file_list[0]
+    fullpath = f'{path_test}/{name}/{file_list[0]}'
 
     with h5py.File(fullpath, 'r') as f:
         # managing directories
@@ -176,7 +176,7 @@ def plot_all(foldername : str, trials : list):
     set_3d = set([item for sublist in keys3d for item in sublist])
 
     path = f'{paths.to_folder_test()}{foldername}'
-    print(f'multiplot too {path}')
+    print(f'multiplot to {path}')
     if os.path.exists(path):
         shutil.rmtree(path) 
     os.mkdir(path)
@@ -210,7 +210,7 @@ def all(path: str, key: str, trials:list):
             arr = trial_dict[key]
             plt.plot(arr)
             legend.append(trial)
-    plt.legend(legend)
+    plt.legend(legend, fontsize = '8')
 
     realkey = key.split('_')[0]
 
