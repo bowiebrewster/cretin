@@ -71,6 +71,14 @@ naming_dict = {
 }
 
 
+def blacklist_key(key : str):
+    if key in ['model_1','previous','ai','zi','model_id']:
+        return True
+    elif key.split('_')[0] in ['r', 'u', 'regmap', 'iso']:
+        return True
+    else:
+        return False
+
 def plot(name : str, longprint : bool, plot_duplicates : bool):
     path_test = paths.to_folder_test()
     os.chdir(path_test + '/' + name)
@@ -97,9 +105,7 @@ def plot(name : str, longprint : bool, plot_duplicates : bool):
                 print(f'plot nr \t {counter} \t {key} \t {np.shape(arr)}')
             
             # these never need to be plot
-            if key in ['model_1','previous','ai','zi','model_id']:
-                pass
-            elif key.split('_')[0] in ['r', 'u', 'regmap', 'iso']:
+            if blacklist_key(key):
                 pass
             elif len(arr.shape) == 0:
                 pass

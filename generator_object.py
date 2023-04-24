@@ -116,8 +116,8 @@ class User_input():
     def radiation_spectrum(self, n_energies : int, energy_range : list, ratio : float):
         self.rad_spectrum = [n_energies, energy_range, ratio]
 
-    def radiation_aprd(self, voigt_paramters : list):
-        self.sources_aprd.append(voigt_paramters)
+    def radiation_aprd(self, voigt_parameters : list):
+        self.sources_aprd.append(voigt_parameters)
     
     def source_boundary(self, package: str, type : str, nodes : list, value : float , mult : float = None):
         string_input_requirement(package, ['radiation', 'conduction', 'hydro', 'velocity', 'pressure', 'divertor', 'current','all'])
@@ -157,9 +157,6 @@ class User_input():
     #def raytrace(self):
     #    pass
 
-
-
-
     def source_rswitch(self, c_is_inf : bool = None, assume_LTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
                        multi_group_acceleration : str = None, use_flux_limiting : bool = None):
@@ -193,10 +190,17 @@ class User_input():
     def controls(self, t_start : float, t_end : float, restart : bool = False, edits : bool = False):
         self.control = [t_start, t_end, restart, edits]
 
+    def controls_history(self, id : int, value_mutiplier : float, time_multiplier, type : list = None):
+        self.controls_hist = [id, value_mutiplier, time_multiplier, type]
+        self.tv = []
+
+    def controls_history_tv(self, time : float, value : float):
+        self.tv.append([time, value])
+
     def popular_switches(self, include_degeneracy : str = None, timestep_type : str = None, continuum_transfer : str = None,
                           continuum_transfer_evolves_temp : bool = False, timestep_between_snapshot : int = None, 
                           kinematics : str = None, initialization_control : str = None, continuum_lowering_control  : str = None,
-                          raytrace : bool = None):
+                          raytrace : bool = None, temparture_calc_heating_rates : list = None, max_iterations_per_timestep : float = None):
         
         # using the gather_data.ipynb file i've searched for the most common switches 
         if include_degeneracy == None:
@@ -257,15 +261,59 @@ class User_input():
 
             string7 = f'switch 55 {str(continuum_lowering_control_dict[continuum_lowering_control])}' if continuum_lowering_control != None else None
         
-
         if raytrace == None or raytrace == False:
             string8 = None
         else:
             string8 = 'switch 45 1'
 
+        if temparture_calc_heating_rates == None:
+            string9 = None
+        else:
+            temp1, heat1 = temparture_calc_heating_rates[0], temparture_calc_heating_rates[1]
+            temp_calc_dict = {'temp calc = none' : 0,'temp calc = time dependant' : 1,' temp calc = steady state' : -1}
+
+            heating_type_dict = {'heating rates = electronic' : 1,' heating rate uses internal energy rates':2,
+                              'heating rate uses interal energy deltas':3}
+            
+            string_input_requirement(temp1, temp_calc_dict.keys())
+            string_input_requirement(heat1, heating_type_dict.keys())
+
+            sol = temp_calc_dict[temp1]*heating_type_dict[heat1]
+            string9 = f'switch 31 {sol}'
 
 
-        self.pop_switches = [string0, string1, string2, string3, string4, string5, string6, string7, string8]
+        if max_iterations_per_timestep == None:
+            string10 = None
+        else:
+            string10 = f'switch 44 {max_iterations_per_timestep}'
+            
+
+
+        self.pop_switches = [value for key, value in locals().items() if 'string' in key]
+
+    def parameters(self, scattering_muliplier : float = None, initial_timestep : float = None, minimum_timestep : float = None, maximum_timestep : float = None):
+        if scattering_muliplier == None:
+            string1 = None
+        else:
+            string1 = f'param 5 {scattering_muliplier}'
+
+        if initial_timestep == None:
+            string2 = None
+        else:
+            string2 = f'param 41 {initial_timestep}'
+
+        if minimum_timestep == None:
+            string3 = None
+        else:
+            string3 = f'param 44 {minimum_timestep}'
+
+        if maximum_timestep == None:
+            string4 = None
+        else:
+            string4 = f'param 45 {maximum_timestep}'        
+        
+            
+        self.pop_parameters = [string1, string2, string3, string4]
 
 
 def list_input_requirement(lis):

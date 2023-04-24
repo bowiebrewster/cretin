@@ -60,21 +60,20 @@ class Text_generator():
     def geometry(self):
         string = self.start_chapter('Geometry')
         if 'geometry0' in self.dict:
-            string +='\n geometry ' + str(self.user_input.geometry0)
+            string += f'\ngeometry {str(self.user_input.geometry0)}'
 
         if 'geom_nodes' in self.dict:
             nodes = self.user_input.geom_nodes
-            nodes0 = nodes[0] + nodes[1]+ f" {self.ilts(nodes[2])} {self.ilts(nodes[3])} "
+            nodes0 = f"{nodes[0]}{nodes[1]} {self.ilts(nodes[2])} {self.ilts(nodes[3])} "
 
-
-            string +='\n ' + nodes0
+            string +='\n' + nodes0
             for val in nodes[4:-1]:
                 if val != None:
                     string += f"{val} "
         
         if 'geom_quad' in self.dict:
             quad = self.flat(self.user_input.geom_quad)
-            string +='\n quad ' + self.ilts(quad)
+            string += f'\nquad {self.ilts(quad)}'
 
         return string
 
@@ -122,6 +121,16 @@ class Text_generator():
             last = '' if bound[-1] == None else bound[-1]
             string += f'boundary {bound[0]} {bound[1]} {self.ilts(bound[2])} {bound[3]} {last}'
 
+
+
+        if 'controls_hist' in self.dict:
+            controls_hist = self.user_input.controls_hist
+            string += f'\nhistory {self.ilts(controls_hist[0:3])}'
+
+            if 'tv' in self.dict:
+                for pair in self.user_input.tv:
+                    string += f'\n\ttv {pair[0]} {pair[1]}'
+
         return string 
     
     def controls(self):
@@ -137,6 +146,8 @@ class Text_generator():
             string += '\n edits'
         string += '\n\ndump all'
 
+
+
         return string
     
     def pop_switches(self):
@@ -149,8 +160,20 @@ class Text_generator():
                 string += '\n '+string0
         return string
     
+
+    def pop_parameters(self):
+        if 'pop_parameters' not in self.dict:
+            return ''
+        pop = self.user_input.pop_parameters
+        string = self.start_chapter('Parameters')
+        for string0 in pop:
+            if string0 != None:
+                string += f'\n{string0}'
+
+        return string
+    
     def execute(self):
         output = ''
-        for func in [self.materials, self.geometry, self.radiation, self.sources, self.controls, self.pop_switches]:
+        for func in [self.materials, self.geometry, self.radiation, self.sources, self.controls, self.pop_switches, self.pop_parameters]:
             output += func()+'\n'
         return output

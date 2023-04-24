@@ -40,22 +40,32 @@ def savedict(path : str):
             
     return dictio
 
+
+
 # checking diffrence between dicionaries
-def check_dependancy(path_original : str, path_compare : str):
+def compare_run(name1 : str, name2 : str, longprint : bool = None):
     global primary_dic, secondary_dic
-    primary_dic, secondary_dic = savedict(dump_path(path_original)), savedict(dump_path(path_compare))
+    primary_dic, secondary_dic = savedict(dump_path(name1)), savedict(dump_path(name2))
     
     compare_dic = {}
     for orignal_key, orignal_value in primary_dic.items():
         secondary_value = secondary_dic[orignal_key]
         
-        try:
-            compare_dic[orignal_key] = np.allclose(orignal_value, secondary_value)
-        except:
-            if not(orignal_key == 'model_1' or orignal_key == 'previous'):
+        if not write_run_plot.blacklist_key(orignal_key):
+            try:
+                compare_dic[orignal_key] = np.allclose(orignal_value, secondary_value)
+            except:
+
                 compare_dic[orignal_key] = 'comparison error'
-        
-    return compare_dic
+
+
+    val_lis = list(compare_dic.values())
+    print(f'comparison of {name1} and {name2}, number of identical arrays: {val_lis.count(True)} number of changed arrays: {val_lis.count(False)} number of comparision errors: {val_lis.count("comparison error")}')
+
+    if longprint:
+        for key, value in compare_dic.items():
+            if value != True: print(key, value) 
+
 
 def compare_runs(org_trial: str, curr_trial: str, compare_dict : dict):
 
