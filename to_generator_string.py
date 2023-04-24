@@ -157,7 +157,7 @@ class Text_generator():
         string = self.start_chapter('Switches')
         for string0 in pop:
             if string0 != None:
-                string += '\n '+string0
+                string += f'\n{string0}'
         return string
     
 

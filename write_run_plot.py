@@ -72,9 +72,9 @@ naming_dict = {
 
 
 def blacklist_key(key : str):
-    if key in ['model_1','previous','ai','zi','model_id']:
+    if key in ['previous','ai','zi']:
         return True
-    elif key.split('_')[0] in ['r', 'u', 'regmap', 'iso']:
+    elif key.split('_')[0] in ['model','r', 'u', 'regmap', 'iso']:
         return True
     else:
         return False

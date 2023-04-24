@@ -40,10 +40,8 @@ def savedict(path : str):
             
     return dictio
 
-
-
 # checking diffrence between dicionaries
-def compare_run(name1 : str, name2 : str, longprint : bool = None):
+def compare_run(name1 : str, name2 : str, longprint : bool = False):
     global primary_dic, secondary_dic
     primary_dic, secondary_dic = savedict(dump_path(name1)), savedict(dump_path(name2))
     
@@ -58,14 +56,20 @@ def compare_run(name1 : str, name2 : str, longprint : bool = None):
 
                 compare_dic[orignal_key] = 'comparison error'
 
-
     val_lis = list(compare_dic.values())
-    print(f'comparison of {name1} and {name2}, number of identical arrays: {val_lis.count(True)} number of changed arrays: {val_lis.count(False)} number of comparision errors: {val_lis.count("comparison error")}')
+    print(f'comparison of {name1} and {name2}, number of identical arrays: {val_lis.count(True)} number of changed arrays: {val_lis.count(False)} number of comparision errors: {val_lis.count("comparison error")}\n')
 
     if longprint:
         for key, value in compare_dic.items():
-            if value != True: print(key, value) 
-
+            # theres more options than true and false
+            if value != True:
+                dic =  write_run_plot.naming_dict
+                key0 = key.split('_')[0]
+                key1 = '_'.join(key.split('_')[1:])
+                if key0 in dic.keys():
+                    print(dic[key0]+key1, value)
+                else:
+                    print(key, value) 
 
 def compare_runs(org_trial: str, curr_trial: str, compare_dict : dict):
 
@@ -99,38 +103,32 @@ def plot(name : str, plot_duplicates : bool):
         for key, value in f.items():
             arr = np.array(f[key])
 
-            # these never need to be plot
-            if key in ['model_1','previous','ai','zi','model_id']:
-                pass
-            elif key.split('_')[0] in ['r', 'u', 'regmap', 'iso']:
-                pass
-
-            elif len(arr.shape) == 0:
+            if write_run_plot.blacklist_key(key) or len(arr.shape) == 0:
                 pass
 
             elif len(arr.shape) == 2:
-                plot3d(name, path, key, plot_duplicates, arr)
+                plot3d(key, plot_duplicates, arr)
 
             elif len(arr.shape) == 1 and len(arr) > 0:
-                plot2d(name, path, key, plot_duplicates, arr)
+                plot2d(key, plot_duplicates, arr)
 
             else:
                 print(f'strange array with shape {arr.shape} has not been plot')
 
             counter += 1
 
-def plot3d(name : str, path : str, masterkey : str,  plot_duplicates : bool, arr):
+def plot3d(masterkey : str,  plot_duplicates : bool, arr):
     collapse = are_all_vectors_identical(arr)
     if collapse == 'rows':
         vector = arr[0]
-        plot2d(name, path, masterkey, plot_duplicates, vector)
+        plot2d(masterkey, plot_duplicates, vector)
     elif collapse == 'columns':
         vector = arr[:, 0]
-        plot2d(name, path, masterkey, plot_duplicates, vector)
+        plot2d(masterkey, plot_duplicates, vector)
 
     else:        
         save_bool = True
-        for key, array in arrays3d.items():
+        for array in arrays3d.values():
             if np.shape(array) == np.shape(arr):
                 if np.allclose(arr, array):
                     save_bool = False
@@ -138,9 +136,9 @@ def plot3d(name : str, path : str, masterkey : str,  plot_duplicates : bool, arr
         if save_bool or plot_duplicates:
             arrays3d[masterkey] = arr
 
-def plot2d(name : str, path:str, masterkey:str,  plot_duplicates : bool, arr):
+def plot2d(masterkey:str,  plot_duplicates : bool, arr):
     save_bool = True 
-    for key, array in arrays2d.items():
+    for array in arrays2d.values():
         if np.shape(array) == np.shape(arr):
             if np.allclose(arr, array):
                 save_bool = False
