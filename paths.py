@@ -2,10 +2,8 @@
 import os 
 
 def to_folder_test():
-    paths = []
-
-    #insert the path to your test folder here
-    paths_test = ['/home/brewster/Desktop/cretin.v2_19_test/bowie/']
+    #add the path to your test folder here
+    paths_test = ['/home/brewster/Desktop/bowie/']
 
     for path_test in paths_test:
         if os.path.exists(path_test): 
@@ -18,6 +16,7 @@ def to_folder_test():
     return path
 
 def to_folder_cretin():
+    # add your path to the main cretin package (where paths.py should be located in) here 
     paths_main = ['/home/brewster/Desktop/cretin/cretin/']
 
     for path_main in paths_main:

@@ -157,11 +157,11 @@ class User_input():
     #def raytrace(self):
     #    pass
 
-    def source_rswitch(self, c_is_inf : bool = None, assume_LTE : bool = None, radiation_transfer_algorithm1d : str = None, 
+    def source_rswitch(self, c_is_inf : bool = None, assume_NLTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
                        multi_group_acceleration : str = None, use_flux_limiting : bool = None):
         string0 = 'rswitch 5 0' if c_is_inf == True else None
-        string1 = 'rswitch 20 0' if assume_LTE == True else None
+        string1 = 'rswitch 20 1' if assume_NLTE == True else None
         rad_1d_dict = {'do flux-limited diffusion':.5,'do transport using Feautrier formalism':-1,'do transport using integral formalism':-2}
         rad_2d_dict = {'use iccg':1, 'use ilur':2}
 
@@ -182,10 +182,16 @@ class User_input():
         string3 = 'rswitch 3 ' + str(max_iter_intensities_temp) if max_iter_intensities_temp != None else None
         multi_group_acceleration_dict = {'no acceleration (or direct solution for 1 group)':0,'grey acceleration':1,
                                          'direct multigroup acceleratio':2,'direct solution (1-d only)':3,'diagonal ALI multigroup acceleration (1-d only)':4}
-        string_input_requirement(multi_group_acceleration, multi_group_acceleration_dict.keys())
-        string4 = 'rswitch 4 ' + str(multi_group_acceleration_dict[multi_group_acceleration]) if multi_group_acceleration != None else None
+
+        if multi_group_acceleration == None:
+            string4 = None
+        else:
+            string_input_requirement(multi_group_acceleration, multi_group_acceleration_dict.keys())
+            string4 =  'rswitch 4 ' + str(multi_group_acceleration_dict[multi_group_acceleration])
+                    
         string5 = 'rswitch 6 1' if use_flux_limiting == True else None
-        self.source_rswitch0 = [string0, string1, string2, string3, string4, string5]
+
+        self.source_rswitch0 = [value for key, value in locals().items() if 'string' in key]
 
     def controls(self, t_start : float, t_end : float, restart : bool = False, edits : bool = False):
         self.control = [t_start, t_end, restart, edits]
@@ -287,11 +293,9 @@ class User_input():
         else:
             string10 = f'switch 44 {max_iterations_per_timestep}'
             
-
-
         self.pop_switches = [value for key, value in locals().items() if 'string' in key]
 
-    def parameters(self, scattering_muliplier : float = None, initial_timestep : float = None, minimum_timestep : float = None, maximum_timestep : float = None):
+    def parameters(self, scattering_muliplier : float = None, initial_timestep : float = None, minimum_timestep : float = None, maximum_timestep : float = None, time_between_snapshots : float = None):
         if scattering_muliplier == None:
             string1 = None
         else:
@@ -310,10 +314,15 @@ class User_input():
         if maximum_timestep == None:
             string4 = None
         else:
-            string4 = f'param 45 {maximum_timestep}'        
+            string4 = f'param 45 {maximum_timestep}'
+
+        if time_between_snapshots == None:
+            string5 = None
+        else:
+            string5 = f'param 40 {time_between_snapshots}'               
         
             
-        self.pop_parameters = [string1, string2, string3, string4]
+        self.pop_parameters = [value for key, value in locals().items() if 'string' in key]
 
 
 def list_input_requirement(lis):

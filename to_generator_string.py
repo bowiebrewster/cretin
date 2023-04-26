@@ -131,6 +131,13 @@ class Text_generator():
                 for pair in self.user_input.tv:
                     string += f'\n\ttv {pair[0]} {pair[1]}'
 
+
+        if 'source_rswitch0' in self.dict:
+            pop = self.user_input.source_rswitch0
+            for string0 in pop:
+                if string0 != None:
+                    string += f'\n{string0}'
+
         return string 
     
     def controls(self):
@@ -154,19 +161,16 @@ class Text_generator():
         if 'pop_switches' not in self.dict:
             return ''
         pop = self.user_input.pop_switches
-        string = self.start_chapter('Switches')
+        string = self.start_chapter('Switches and Parameters')
         for string0 in pop:
             if string0 != None:
                 string += f'\n{string0}'
-        return string
     
-
-    def pop_parameters(self):
         if 'pop_parameters' not in self.dict:
             return ''
-        pop = self.user_input.pop_parameters
-        string = self.start_chapter('Parameters')
-        for string0 in pop:
+        wob = self.user_input.pop_parameters
+
+        for string0 in wob:
             if string0 != None:
                 string += f'\n{string0}'
 
@@ -174,6 +178,6 @@ class Text_generator():
     
     def execute(self):
         output = ''
-        for func in [self.materials, self.geometry, self.radiation, self.sources, self.controls, self.pop_switches, self.pop_parameters]:
+        for func in [self.materials, self.geometry, self.radiation, self.sources, self.controls, self.pop_switches]:
             output += func()+'\n'
         return output

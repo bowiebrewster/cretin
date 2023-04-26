@@ -1,6 +1,7 @@
 import os, glob 
 from collections import Counter
 import pandas as pd
+import paths
 # We use this class to search through the test folder's .gen files. 
 # Finding the most used keywords helps in prioritizing what functionality should be written first.
 
@@ -8,15 +9,7 @@ import pandas as pd
 class Generators():
     def __init__(self):
 
-        #insert the path to your test folder here
-        paths_test = ["/Users/bowie/OneDrive/Desktop/recretincode/cretin.v2_19_test/test/",
-            '/home/brewster/Desktop/cretin.v2_19_test/test/']
-
-        for path_test in paths_test:
-            if os.path.exists(path_test): 
-                self.path = path_test 
-                break
-
+        self.path = paths.to_folder_test()
         os.chdir(self.path)
 
     def word(self, input : str, word_slicing : tuple, print_path : bool = False):

@@ -70,6 +70,13 @@ naming_dict = {
 "drat" : "mesh + kappa_sp + emis_sp + velocity"
 }
 
+def split(name : str):
+    splitname = name.split('_')
+    key = splitname[0]
+    index = '_'.join(splitname[1:])
+    return key, index
+
+
 
 def blacklist_key(key : str):
     if key in ['previous','ai','zi']:
@@ -143,12 +150,12 @@ def plot3d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
             arrays3d[masterkey] = arr
             fig, ax = plt.subplots()
             im = ax.imshow(arr)
-            splitname = masterkey.split("_")[0]
-            if splitname in naming_dict.keys():
-                masterkey = naming_dict[splitname]+ "_".join(masterkey.split("_")[1:])
-            ax.set_title(masterkey)
+            key, index = split(masterkey)
+            if key in naming_dict.keys():
+                key = naming_dict[key]+ index
+            ax.set_title(key)
 
-            fig.savefig(f'{path}/{masterkey}.png')
+            fig.savefig(f'{path}/{key}.png')
             fig.clf(); 
             plt.close()
 
@@ -185,9 +192,9 @@ def plot2d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
     if save_bool or plot_duplicates:
         arrays2d[masterkey] = arr
         plt.plot(arr)
-        splitname = masterkey.split("_")[0]
-        if splitname in naming_dict.keys():
-            masterkey = naming_dict[splitname]+ "_".join(masterkey.split("_")[1:])     
+        key, index = split(masterkey)
+        if key in naming_dict.keys():
+            masterkey = naming_dict[key] + index    
         plt.title(masterkey)
         plt.savefig(f'{path}/{masterkey}.png')
         plt.clf()

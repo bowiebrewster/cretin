@@ -64,10 +64,9 @@ def compare_run(name1 : str, name2 : str, longprint : bool = False):
             # theres more options than true and false
             if value != True:
                 dic =  write_run_plot.naming_dict
-                key0 = key.split('_')[0]
-                key1 = '_'.join(key.split('_')[1:])
-                if key0 in dic.keys():
-                    print(dic[key0]+key1, value)
+                key, index = write_run_plot.split(key)
+                if key in dic.keys():
+                    print(dic[key]+index, value)
                 else:
                     print(key, value) 
 
@@ -220,10 +219,10 @@ def all(path: str, key: str, trials:list):
             legend.append(trial)
     plt.legend(legend, fontsize = '8')
 
-    realkey = key.split('_')[0]
-
-    if realkey in axis_dict.keys():
-        plt.xlabel(axis_dict[realkey])
+    key, index = write_run_plot.split(key)
+    
+    if key in axis_dict.keys():
+        plt.xlabel(axis_dict[key])
     
     try:
         start = xaxis_delimitter(arr)[0]
@@ -232,13 +231,11 @@ def all(path: str, key: str, trials:list):
     except:
         pass
 
-    index = '_'.join(key.split('_')[1:])
-    if realkey in naming_dict.keys():
-        realkey = naming_dict[realkey]+index
+    if key in naming_dict.keys():
+        key = naming_dict[key]+index
 
-
-    plt.title(realkey)
-    plt.savefig(f'{path}/{realkey}.png')
+    plt.title(key)
+    plt.savefig(f'{path}/{key}.png')
     plt.clf()
     plt.close()
 
