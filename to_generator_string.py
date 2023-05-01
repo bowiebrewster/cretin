@@ -176,8 +176,22 @@ class Text_generator():
 
         return string
     
+    def edits(self):
+        if len(self.user_input.plots) >0:
+            string = self.start_chapter('Edits')
+
+            for plot in self.user_input.plots:
+                
+                string += f'\nplot "{plot[0]}"\nsend-to-dump\n\txvar {plot[1]}\n\tyvar {plot[2]}'
+
+                if len(plot) == 8:
+                    string += f'{self.ilts(plot[3:])}'
+
+        return string
+
+    
     def execute(self):
         output = ''
-        for func in [self.materials, self.geometry, self.radiation, self.sources, self.controls, self.pop_switches]:
+        for func in [self.materials, self.geometry, self.radiation, self.sources, self.controls, self.pop_switches, self.edits]:
             output += func()+'\n'
         return output

@@ -2,8 +2,8 @@ from importlib import reload
 import numpy as np
 import matplotlib.pyplot as plt
 import h5py, os, glob, shutil
-import generator_object, to_generator_string, search, paths #these python classes should be in the same folder as cretin_main
-for obj in [generator_object, to_generator_string, search, paths]:
+import generator_object, to_generator_string, search, paths,plt_file #these python classes should be in the same folder as cretin_main
+for obj in [generator_object, to_generator_string, search, paths, plt_file]:
     reload(obj)
 
 
@@ -69,14 +69,19 @@ naming_dict = {
 "radiation" : "jnu + jbar",
 "drat" : "mesh + kappa_sp + emis_sp + velocity"
 }
+def dump_path(name : str):
+    path_test = paths.to_folder_test()
+    os.chdir(f'{path_test}/{name}')
+    file_list = glob.glob('*.d*')
+    fullpath = f'{path_test}/{name}/{file_list[0]}'
+    return fullpath
+
 
 def split(name : str):
     splitname = name.split('_')
     key = splitname[0]
     index = '_'.join(splitname[1:])
     return key, index
-
-
 
 def blacklist_key(key : str):
     if key in ['previous','ai','zi']:
@@ -87,13 +92,10 @@ def blacklist_key(key : str):
         return False
 
 def plot(name : str, longprint : bool, plot_duplicates : bool):
-    path_test = paths.to_folder_test()
-    os.chdir(path_test + '/' + name)
-    file_list = glob.glob('*.d*')
-    fullpath = path_test + '/' + name + '/' + file_list[0]
+    fullpath = dump_path(name)
 
     with h5py.File(fullpath, 'r') as f:
-        path = path_test + name + '/images'
+        path = paths.to_folder_test() + name + '/images'
         if os.path.exists(path):
             shutil.rmtree(path) 
         os.mkdir(path)
@@ -201,8 +203,15 @@ def plot2d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
         plt.close()
 
 
+def plot_extra(name:str, object):
+    if len(object.plots)>0:
+        for plot in object.plots :
+            plt_file.txt_to_plot(name, plot)
 
 def all(name: str, object, longprint : bool, plot_duplicates : bool):
     write(name, object)
     run(name, longprint)
     plot(name, longprint, plot_duplicates)
+    plot_extra(name, object)
+
+

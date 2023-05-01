@@ -22,148 +22,16 @@ def combinatorics(arr):
                 result.append([item] + combination)
         return result
     
-# path to the dump file
-def dump_path(name : str):
-    path_test = paths.to_folder_test()
-    os.chdir(f'{path_test}/{name}')
-    file_list = glob.glob('*.d*')
-    fullpath = f'{path_test}/{name}/{file_list[0]}'
-    return fullpath
-
 # extracting the data from the dumpfile
 def savedict(path : str):
     dictio = {}
     with h5py.File(path, 'r') as f:
-        for key, value in f.items():
+        for key in f.keys():
             arr = np.array(f[key])
             dictio[key] = arr
             
     return dictio
 
-# checking diffrence between dicionaries
-def compare_run(name1 : str, name2 : str, longprint : bool = False):
-    global primary_dic, secondary_dic
-    primary_dic, secondary_dic = savedict(dump_path(name1)), savedict(dump_path(name2))
-    
-    compare_dic = {}
-    for orignal_key, orignal_value in primary_dic.items():
-        secondary_value = secondary_dic[orignal_key]
-        
-        if not write_run_plot.blacklist_key(orignal_key):
-            try:
-                compare_dic[orignal_key] = np.allclose(orignal_value, secondary_value)
-            except:
-
-                compare_dic[orignal_key] = 'comparison error'
-
-    val_lis = list(compare_dic.values())
-    print(f'comparison of {name1} and {name2}, number of identical arrays: {val_lis.count(True)} number of changed arrays: {val_lis.count(False)} number of comparision errors: {val_lis.count("comparison error")}\n')
-
-    if longprint:
-        for key, value in compare_dic.items():
-            # theres more options than true and false
-            if value != True:
-                dic =  write_run_plot.naming_dict
-                key, index = write_run_plot.split(key)
-                if key in dic.keys():
-                    print(dic[key]+index, value)
-                else:
-                    print(key, value) 
-
-def compare_runs(org_trial: str, curr_trial: str, compare_dict : dict):
-
-        identical_set = set([key.split('_')[0] for key, value in compare_dict.items() if value == True])
-        changed_set = set([key.split('_')[0] for key, value in compare_dict.items() if value == False])
-        error_set = set([key.split('_')[0] for key, value in compare_dict.items() if value == 'comparison error'])
-
-        identical_lis = [naming_dict[setpiece] for setpiece in identical_set if setpiece in naming_dict]
-        changed_lis = [naming_dict[setpiece] for setpiece in changed_set if setpiece in naming_dict]
-        error_lis = [naming_dict[setpiece] for setpiece in error_set if setpiece in naming_dict]
-        print(f'comparison of {org_trial} and {curr_trial}, identical arrays: {identical_lis}\n changed arrays: {changed_lis}\n comparision error arrays: {error_lis}')
-
-def plot(name : str, plot_duplicates : bool):
-    # finding d file
-    path_test = paths.to_folder_test()
-    os.chdir(path_test + '/' + name)
-    file_list = glob.glob('*.d*')
-
-    if len(file_list) == 0:
-        raise Exception(f'{name} file list does not contain dump file but does contain {os.listdir()}')
-    fullpath = f'{path_test}/{name}/{file_list[0]}'
-
-    with h5py.File(fullpath, 'r') as f:
-        # managing directories
-        path = path_test + name + '/images'
-        if os.path.exists(path):
-            shutil.rmtree(path) 
-        os.mkdir(path)
-            
-        counter = 0
-        for key, value in f.items():
-            arr = np.array(f[key])
-
-            if write_run_plot.blacklist_key(key) or len(arr.shape) == 0:
-                pass
-
-            elif len(arr.shape) == 2:
-                plot3d(key, plot_duplicates, arr)
-
-            elif len(arr.shape) == 1 and len(arr) > 0:
-                plot2d(key, plot_duplicates, arr)
-
-            else:
-                print(f'strange array with shape {arr.shape} has not been plot')
-
-            counter += 1
-
-def plot3d(masterkey : str,  plot_duplicates : bool, arr):
-    collapse = are_all_vectors_identical(arr)
-    if collapse == 'rows':
-        vector = arr[0]
-        plot2d(masterkey, plot_duplicates, vector)
-    elif collapse == 'columns':
-        vector = arr[:, 0]
-        plot2d(masterkey, plot_duplicates, vector)
-
-    else:        
-        save_bool = True
-        for array in arrays3d.values():
-            if np.shape(array) == np.shape(arr):
-                if np.allclose(arr, array):
-                    save_bool = False
-                    
-        if save_bool or plot_duplicates:
-            arrays3d[masterkey] = arr
-
-def plot2d(masterkey:str,  plot_duplicates : bool, arr):
-    save_bool = True 
-    for array in arrays2d.values():
-        if np.shape(array) == np.shape(arr):
-            if np.allclose(arr, array):
-                save_bool = False
-               
-    if save_bool or plot_duplicates:
-        arrays2d[masterkey] = arr
-
-# Check if all vectors in a numpy array are identical.
-def are_all_vectors_identical(arr):
-
-    # Check that the array has at least one row
-    if arr.shape[0] < 1:
-        return False
-    
-    # Get the first row as a reference vector
-    ref_vector = arr[0]
-    ref_column = arr[:, 0]
-    # Check if all other vectors are equal to the reference vector
-    if np.all(np.equal(arr, ref_vector), axis=1).all():
-        return 'rows'
-    
-    elif np.all(np.equal(arr, ref_column.reshape(-1, 1)), axis=0).all():
-        return 'columns'
-    
-    else:
-        return True
 
 all_trials_dict = {}
 
@@ -196,6 +64,152 @@ def plot_all(foldername : str, trials : list):
         for key in set_3d:
             all(path, key, trials)
 
+def plot(name : str, plot_duplicates : bool):
+    # finding d file
+    path_test = paths.to_folder_test()
+    os.chdir(path_test + '/' + name)
+    file_list = glob.glob('*.d*')
+
+    if len(file_list) == 0:
+        raise Exception(f'{name} file list does not contain dump file but does contain {os.listdir()}')
+    fullpath = f'{path_test}/{name}/{file_list[0]}'
+
+    with h5py.File(fullpath, 'r') as f:
+        # managing directories
+        path = path_test + name + '/images'
+        if os.path.exists(path):
+            shutil.rmtree(path) 
+        os.mkdir(path)
+            
+        for key in f.keys():
+            arr = np.array(f[key])
+
+            if write_run_plot.blacklist_key(key) or len(arr.shape) == 0:
+                pass
+
+            elif len(arr.shape) == 2:
+                plot3d(key, plot_duplicates, arr)
+
+            elif len(arr.shape) == 1 and len(arr) > 0:
+                plot2d(key, plot_duplicates, arr)
+
+            else:
+                print(f'strange array with shape {arr.shape} has not been plot')
+
+
+
+def plot2d(masterkey:str,  plot_duplicates : bool, arr):
+    save_bool = True 
+    for array in arrays2d.values():
+        if np.shape(array) == np.shape(arr):
+            if np.allclose(arr, array):
+                save_bool = False
+               
+    if save_bool or plot_duplicates:
+        arrays2d[masterkey] = arr
+
+def plot3d(masterkey : str,  plot_duplicates : bool, arr):
+    collapse = are_all_vectors_identical(arr)
+    if collapse == 'rows':
+        vector = arr[0]
+        plot2d(masterkey, plot_duplicates, vector)
+    elif collapse == 'columns':
+        vector = arr[:, 0]
+        plot2d(masterkey, plot_duplicates, vector)
+
+    else:        
+        save_bool = True
+        for array in arrays3d.values():
+            if np.shape(array) == np.shape(arr):
+                if np.allclose(arr, array):
+                    save_bool = False
+                    
+        if save_bool or plot_duplicates:
+            arrays3d[masterkey] = arr
+
+def all(path: str, key: str, trials:list):
+    legend = []
+    has_plot = False
+    for trial in trials:
+        trial_dict = all_trials_dict[trial][0]
+        if key in trial_dict.keys():
+            arr = trial_dict[key]
+            plt.plot(arr)
+            has_plot = True
+            legend.append(trial)
+
+
+    key, index = write_run_plot.split(key)
+
+    if key in axis_dict.keys():
+        plt.xlabel(axis_dict[key])
+    
+    try:
+        start, end = xaxis_delimitter(arr)
+        plt.xlim(start - 1, end + 1)
+    except:
+        pass
+
+    if key in naming_dict.keys():
+        key = naming_dict[key]+index
+
+        plt.legend(legend, fontsize = '8')
+
+    if has_plot:
+        plt.title(key)
+        plt.savefig(f'{path}/{key}.png')
+    plt.clf()
+    plt.close()
+
+# checking diffrence between dicionaries
+def compare_run(name1 : str, name2 : str, longprint : bool = False):
+    global primary_dic, secondary_dic
+    primary_dic, secondary_dic = savedict(write_run_plot.dump_path(name1)), savedict(write_run_plot.dump_path(name2))
+    
+    compare_dic = {}
+    for orignal_key, orignal_value in primary_dic.items():
+        secondary_value = secondary_dic[orignal_key]
+        
+        if not write_run_plot.blacklist_key(orignal_key):
+            try:
+                compare_dic[orignal_key] = np.allclose(orignal_value, secondary_value)
+            except:
+                compare_dic[orignal_key] = 'comparison error'
+
+    val_lis = list(compare_dic.values())
+    print(f'comparison of {name1} and {name2}, number of identical arrays: {val_lis.count(True)} number of changed arrays: {val_lis.count(False)} number of comparision errors: {val_lis.count("comparison error")}\n')
+
+    if longprint:
+        for key, value in compare_dic.items():
+            # theres more options than true and false
+            if value != True:
+                dic =  write_run_plot.naming_dict
+                key, index = write_run_plot.split(key)
+                if key in dic.keys():
+                    print(dic[key]+index, value)
+                else:
+                    print(key, value) 
+
+# Check if all vectors in a numpy array are identical.
+def are_all_vectors_identical(arr):
+
+    # Check that the array has at least one row
+    if arr.shape[0] < 1:
+        return False
+    
+    # Get the first row as a reference vector
+    ref_vector = arr[0]
+    ref_column = arr[:, 0]
+    # Check if all other vectors are equal to the reference vector
+    if np.all(np.equal(arr, ref_vector), axis=1).all():
+        return 'rows'
+    
+    elif np.all(np.equal(arr, ref_column.reshape(-1, 1)), axis=0).all():
+        return 'columns'
+    
+    else:
+        return True
+
 axis_dict = {
     'ne' : 'nodes',
     'ni' : 'nodes',
@@ -209,35 +223,6 @@ axis_dict = {
     'kappa': 'ebins',
 }
 
-def all(path: str, key: str, trials:list):
-    legend = []
-    for trial in trials:
-        trial_dict = all_trials_dict[trial][0]
-        if key in trial_dict.keys():
-            arr = trial_dict[key]
-            plt.plot(arr)
-            legend.append(trial)
-    plt.legend(legend, fontsize = '8')
-
-    key, index = write_run_plot.split(key)
-    
-    if key in axis_dict.keys():
-        plt.xlabel(axis_dict[key])
-    
-    try:
-        start = xaxis_delimitter(arr)[0]
-        end = xaxis_delimitter(arr)[1]
-        plt.xlim(start - 1, end + 1)
-    except:
-        pass
-
-    if key in naming_dict.keys():
-        key = naming_dict[key]+index
-
-    plt.title(key)
-    plt.savefig(f'{path}/{key}.png')
-    plt.clf()
-    plt.close()
 
 # for plots that include a lot of zeros we essentially zoom on the x axis using the delimitters
 def xaxis_delimitter(lst):

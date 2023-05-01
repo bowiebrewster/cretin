@@ -17,6 +17,9 @@ class User_input():
         self.sources = []
         self.sources_aprd = []
 
+        # plots
+        self.plots = []
+
     # materials
     def materials_atom(self, element : str, quantum_n_max : int = 10, iso_min : int = None, iso_max : int= None, index : int = None):
         element_input_requirement(element)
@@ -323,6 +326,25 @@ class User_input():
         
             
         self.pop_parameters = [value for key, value in locals().items() if 'string' in key]
+
+    def add_plot(self, name:str, xvar:str, yvar:str, element_or_transition:str = None, node: int = None,
+                  frequency_or_isosequence : str = None, direction_or_level: str = None, multiplier : float = None):
+        extra_indices = [element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier]
+        summ = sum(x is None for x in extra_indices)
+
+        vars = """cycle,iter,time
+        ir,r,cdens,x2d,y2d,z2d,x3d,y3d,z3d,xy,k,kx,ky,kz,kr,l,lx,ly,lz,lr,m,mx,my,mz,mr
+        ifr,energy,freq,wvl,ebins,fbins,wbins,ifrline,evline,isp,sp_energy,sp_freq,sp_nu,sp_wvl,iso,ziso
+        level,elev"""
+        #string_input_requirement(xvar,vars.split(","))
+        #string_input_requirement(yvar,vars.split(","))
+
+        if summ == 5:
+            self.plots.append([name, xvar, yvar, element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier])
+        elif summ == 0:
+            self.plots.append([name, xvar, yvar])
+        else:
+            raise Exception('either include all or none of the extra variables "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier"')
 
 
 def list_input_requirement(lis):

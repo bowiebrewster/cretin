@@ -1,6 +1,6 @@
 from importlib import reload
-import generator_object, to_generator_string, search, paths, write_run_plot, serial_sim_tools #these python classes should be in the same folder as cretin_main
-for obj in [generator_object, to_generator_string, search, paths, write_run_plot, serial_sim_tools]:
+import paths #these python classes should be in the same folder as cretin_main
+for obj in [paths]:
     reload(obj)
 import numpy as np
 import os, shutil
@@ -47,18 +47,14 @@ def restructure(line : str, count : int):
         lis =  data[vars].append(newline)
 
 
-def txt_to_plot(name : str):
-    folder = f'{path}{name}'
+def txt_to_plot(folder_name : str, plot_data : list):
+    folder = f'{path}{folder_name}'
 
-    with open(f'{folder}/{name}.plt') as f:
+    with open(f'{folder}/{folder_name}.plt') as f:
         lines = f.readlines()
 
         for count, line in enumerate(lines):
             restructure(line, count)
-
-    if os.path.exists(f'{folder}/images'):
-        shutil.rmtree(f'{folder}/images') 
-    os.mkdir(f'{folder}/images')
 
     for key, value in data.items():
         value = np.array(value, dtype=object)
@@ -74,13 +70,15 @@ def txt_to_plot(name : str):
                     plt.plot(col0, column)
                 col_count += 1
 
-            plt.title(key)
-            plt.savefig(f'{folder}/images/{str(key[0])}.png')
+            plt.title(plot_data[0])
+            plt.xlabel(plot_data[1])
+            plt.ylabel(plot_data[2])
+            plt.savefig(f'{folder}/images/{plot_data[0]}.png')
             plt.clf()
             plt.close()
                 
         except:
             print(f'error with {key}')
 
-    print(f'finished writing too {folder}/images')
+
 
