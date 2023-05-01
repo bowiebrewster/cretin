@@ -9,15 +9,14 @@ import matplotlib.pyplot as plt
 # this is an absolute monstrosity of string manipulation, do not judge me father.
 
 path = paths.to_folder_test()
-data = {}
-start_lines = []
-plot_count = 0
+
 
 def restructure(line : str, count : int):
     if line[0] == '#':
-        start_lines.append(count)
+        name = line.split(' ')[1]
+        start_lines[name] = count
 
-    elif count -1 in start_lines:
+    elif count -1 in start_lines.values():
         global plot_count, vars, data
         plot_count +=1
         vars = line.split('         ')
@@ -33,6 +32,9 @@ def restructure(line : str, count : int):
         vars = [plot_count] + vars
 
         vars = tuple(vars)
+
+
+
         data[vars] = []
 
     if line[0] not in ['$', '#'] and 'vars' in globals():
@@ -44,11 +46,13 @@ def restructure(line : str, count : int):
             if len(entry) >3:
                 newline.append(entry)
 
-        lis =  data[vars].append(newline)
+        data[vars].append(newline)
 
 
-def txt_to_plot(folder_name : str, plot_data : list):
+def txt_to_plot(folder_name : str, multiplot : bool = False):
     folder = f'{path}{folder_name}'
+    global data, start_lines, plot_count
+    data, start_lines, plot_count = {},{},0
 
     with open(f'{folder}/{folder_name}.plt') as f:
         lines = f.readlines()
@@ -56,29 +60,29 @@ def txt_to_plot(folder_name : str, plot_data : list):
         for count, line in enumerate(lines):
             restructure(line, count)
 
+    if multiplot:
+        return data
+    
     for key, value in data.items():
-        value = np.array(value, dtype=object)
 
-        try:
-            value = value.astype('float')
+        value = np.array(value)
+        value = value.astype('float')
 
-            col_count = 0
-            for column in value.T:
-                if col_count == 0:
-                    col0 = column
-                else:
-                    plt.plot(col0, column)
-                col_count += 1
+        col_count = 0
+        for column in value.T:
+            if col_count == 0:
+                col0 = column
+            else:
+                plt.plot(col0, column)
+            col_count += 1
 
-            plt.title(plot_data[0])
-            plt.xlabel(plot_data[1])
-            plt.ylabel(plot_data[2])
-            plt.savefig(f'{folder}/images/{plot_data[0]}.png')
-            plt.clf()
-            plt.close()
-                
-        except:
-            print(f'error with {key}')
+        plt.title(f'added plot {key}')
+        plt.xlabel(key[1])
+        plt.ylabel(key[2])
+        plt.savefig(f'{folder}/images/{key}.png')
+        plt.clf()
+        plt.close()
+                    
 
 
 

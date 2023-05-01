@@ -203,15 +203,11 @@ def plot2d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
         plt.close()
 
 
-def plot_extra(name:str, object):
-    if len(object.plots)>0:
-        for plot in object.plots :
-            plt_file.txt_to_plot(name, plot)
 
 def all(name: str, object, longprint : bool, plot_duplicates : bool):
     write(name, object)
     run(name, longprint)
     plot(name, longprint, plot_duplicates)
-    plot_extra(name, object)
+    plt_file.txt_to_plot(name)
 
 

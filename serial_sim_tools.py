@@ -2,10 +2,10 @@
 import os, h5py, glob, shutil
 from importlib import reload
 import numpy as np
-import generator_object, to_generator_string, search, paths, write_run_plot
+import generator_object, to_generator_string, search, paths, write_run_plot, plt_file
 import matplotlib.pyplot as plt
 
-for obj in [generator_object, to_generator_string, search, paths, write_run_plot]:
+for obj in [generator_object, to_generator_string, search, paths, write_run_plot, plt_file]:
     reload(obj)
 naming_dict = write_run_plot.naming_dict
 
@@ -63,6 +63,9 @@ def plot_all(foldername : str, trials : list):
     if len(keys3d) >0:
         for key in set_3d:
             all(path, key, trials)
+
+    plt_files(path, trials)
+
 
 def plot(name : str, plot_duplicates : bool):
     # finding d file
@@ -244,3 +247,38 @@ def xaxis_delimitter(lst):
     end = ranges[-1][-1]
 
     return start, end
+
+def plt_files(path: str, trials : list):
+    all_extract_dict  = {}
+    for trial in trials:
+        data = plt_file.txt_to_plot(trial, multiplot= True)
+
+        for key, value in data.items():
+            value = np.array(value)
+            value = value.astype('float')
+            X = value.T[0]
+            Y = value.T[1]
+            newkey = (trial,*key)
+            all_extract_dict[newkey] = [X,Y]
+
+    #for key, value in all_extract_dict.items():
+    #    print(key[1:], value)
+
+    unique_keys = set(key[1:] for key in all_extract_dict.keys())
+
+    for unq_key in unique_keys:
+        legend = []
+        for key, value in all_extract_dict.items():
+            if key[1:] == unq_key:
+                legend.append(key[0])
+                [X,Y] = value
+                title, xlabel, ylable, goto = key[0], key[2], key[3], f'{path}/{key}.png' 
+                plt.plot(X,Y)
+
+        plt.legend(legend)
+        plt.title(title)
+        plt.xlabel(xlabel)  
+        plt.ylabel(ylable)  
+        plt.savefig(goto)
+        plt.clf()
+        plt.close()
