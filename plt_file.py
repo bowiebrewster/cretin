@@ -5,6 +5,7 @@ for obj in [paths]:
 import numpy as np
 import os, shutil
 import matplotlib.pyplot as plt
+import pandas as pd
 
 # this is an absolute monstrosity of string manipulation, do not judge me father.
 
@@ -85,4 +86,4 @@ def txt_to_plot(folder_name : str, multiplot : bool = False):
                     
 
 
-
+df = txt_to_plot('trial1', multiplot = True)

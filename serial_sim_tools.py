@@ -272,7 +272,8 @@ def plt_files(path: str, trials : list):
             if key[1:] == unq_key:
                 legend.append(key[0])
                 [X,Y] = value
-                title, xlabel, ylable, goto = key[0], key[2], key[3], f'{path}/{key}.png' 
+                title = key[2:]
+                xlabel, ylable, goto = key[2], key[3], f'{path}/{title}.png' 
                 plt.plot(X,Y)
 
         plt.legend(legend)
