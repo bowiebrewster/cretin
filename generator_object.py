@@ -344,7 +344,7 @@ class User_input():
         elif summ == 0:
             self.plots.append([name, xvar, yvar])
         else:
-            print('either include all or none of the extra variables "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier"')
+            print('including some of "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier" is ambigious and may lead to incorrect behaviour in "add plots"')
             lis = [name, xvar, yvar, element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier]
             lis.remove(None)
             self.plots.append(lis)

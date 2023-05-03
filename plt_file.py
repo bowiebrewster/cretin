@@ -48,6 +48,7 @@ def txt_to_plot(folder_name : str, multiplot : bool = False):
     global data, start_lines, plot_count
     data, start_lines, plot_count = {},{},0
 
+    
     with open(f'{folder}/{folder_name}.plt') as f:
         lines = f.readlines()
 

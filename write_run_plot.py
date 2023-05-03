@@ -201,7 +201,9 @@ def plot2d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
         plt.close()
 
 def extra_plot(name : str, multiplot : bool = False):
-    plt_file.txt_to_plot(name)
+    p = f'{paths.to_personal_data()}{name}/{name}.plt'
+    if os.path.exists(p):
+        plt_file.txt_to_plot(folder_name = name, multiplot = multiplot)
 
 def all(name: str, object, longprint : bool, plot_duplicates : bool):
     write(name, object)

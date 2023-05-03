@@ -251,35 +251,38 @@ def xaxis_delimitter(lst):
 def plt_files(path: str, trials : list):
     all_extract_dict  = {}
     for trial in trials:
-        data = plt_file.txt_to_plot(trial, multiplot= True)
 
-        for key, value in data.items():
-            value = np.array(value)
-            value = value.astype('float')
-            X = value.T[0]
-            Y = value.T[1]
-            newkey = (trial,*key)
-            all_extract_dict[newkey] = [X,Y]
+        p = f'{paths.to_personal_data()}{trial}/{trial}.plt'
+        if os.path.exists(p):
+            data = plt_file.txt_to_plot(trial, multiplot= True)
+
+            for key, value in data.items():
+                value = np.array(value)
+                value = value.astype('float')
+                X = value.T[0]
+                Y = value.T[1]
+                newkey = (trial,*key)
+                all_extract_dict[newkey] = [X,Y]
 
     #for key, value in all_extract_dict.items():
     #    print(key[1:], value)
+    if len(all_extract_dict) > 0:
+        unique_keys = set(key[1:] for key in all_extract_dict.keys())
 
-    unique_keys = set(key[1:] for key in all_extract_dict.keys())
+        for unq_key in unique_keys:
+            legend = []
+            for key, value in all_extract_dict.items():
+                if key[1:] == unq_key:
+                    legend.append(key[0])
+                    [X,Y] = value
+                    title = key[2:]
+                    xlabel, ylable, goto = key[2], key[3], f'{path}/{title}.png' 
+                    plt.plot(X,Y)
 
-    for unq_key in unique_keys:
-        legend = []
-        for key, value in all_extract_dict.items():
-            if key[1:] == unq_key:
-                legend.append(key[0])
-                [X,Y] = value
-                title = key[2:]
-                xlabel, ylable, goto = key[2], key[3], f'{path}/{title}.png' 
-                plt.plot(X,Y)
-
-        plt.legend(legend)
-        plt.title(title)
-        plt.xlabel(xlabel)  
-        plt.ylabel(ylable)  
-        plt.savefig(goto)
-        plt.clf()
-        plt.close()
+            plt.legend(legend)
+            plt.title(title)
+            plt.xlabel(xlabel)  
+            plt.ylabel(ylable)  
+            plt.savefig(goto)
+            plt.clf()
+            plt.close()
