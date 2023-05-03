@@ -9,6 +9,9 @@ for obj in [generator_object, to_generator_string, search, paths, write_run_plot
     reload(obj)
 naming_dict = write_run_plot.naming_dict
 
+# in this file we have all the functions for serial simulations. 
+
+
 # takes as an arugment a (jagged) array consisting of k vectors of size k_i
 # returns all possible combinations of the entries in those vectors. 
 # for example input array = [[a1,a2,a3],[b1,b2]] returns [[a1,b1],[a1,b2],[a2,b1],[a2,b2],[a3,b1],[a3,b2]]
@@ -29,9 +32,7 @@ def savedict(path : str):
         for key in f.keys():
             arr = np.array(f[key])
             dictio[key] = arr
-            
     return dictio
-
 
 all_trials_dict = {}
 
@@ -66,7 +67,6 @@ def plot_all(foldername : str, trials : list):
 
     plt_files(path, trials)
 
-
 def plot(name : str, plot_duplicates : bool):
     # finding d file
     path_test = paths.to_personal_data()
@@ -98,8 +98,6 @@ def plot(name : str, plot_duplicates : bool):
 
             else:
                 print(f'strange array with shape {arr.shape} has not been plot')
-
-
 
 def plot2d(masterkey:str,  plot_duplicates : bool, arr):
     save_bool = True 
@@ -197,12 +195,13 @@ def compare_run(name1 : str, name2 : str, longprint : bool = False):
 def are_all_vectors_identical(arr):
 
     # Check that the array has at least one row
-    if arr.shape[0] < 1:
+    if arr.shape[0] == 0:
         return False
     
     # Get the first row as a reference vector
     ref_vector = arr[0]
     ref_column = arr[:, 0]
+
     # Check if all other vectors are equal to the reference vector
     if np.all(np.equal(arr, ref_vector), axis=1).all():
         return 'rows'
@@ -248,6 +247,7 @@ def xaxis_delimitter(lst):
 
     return start, end
 
+# for plotting .plt files created by cretin
 def plt_files(path: str, trials : list):
     all_extract_dict  = {}
     for trial in trials:
@@ -264,8 +264,7 @@ def plt_files(path: str, trials : list):
                 newkey = (trial,*key)
                 all_extract_dict[newkey] = [X,Y]
 
-    #for key, value in all_extract_dict.items():
-    #    print(key[1:], value)
+
     if len(all_extract_dict) > 0:
         unique_keys = set(key[1:] for key in all_extract_dict.keys())
 

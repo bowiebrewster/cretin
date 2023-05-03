@@ -6,6 +6,10 @@ import generator_object, to_generator_string, search, paths,plt_file #these pyth
 for obj in [generator_object, to_generator_string, search, paths, plt_file]:
     reload(obj)
 
+# this file takes the string created by to_generator_string.py and writes it to a file, runs creting with that file, and parses and plots the data created by cretin. 
+# note not every of the above mentioned functions has to be run in series (although that is what write_run_plot.all()) does. If you want to make changes to the .gen file for example
+# feel free not to overwrite it, and if the data is already where you want it to be feel free to only call plot. 
+
 
 # takes the text string and writes it to the cretin generator file
 def write(name : str, object):
