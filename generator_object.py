@@ -344,8 +344,10 @@ class User_input():
         elif summ == 0:
             self.plots.append([name, xvar, yvar])
         else:
-            raise Exception('either include all or none of the extra variables "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier"')
-
+            print('either include all or none of the extra variables "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier"')
+            lis = [name, xvar, yvar, element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier]
+            lis.remove(None)
+            self.plots.append(lis)
 
 def list_input_requirement(lis):
     for input in lis: 

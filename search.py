@@ -9,7 +9,7 @@ import paths
 class Generators():
     def __init__(self):
 
-        self.path = paths.to_folder_test()
+        self.path = paths.to_previous_experiments()
         os.chdir(self.path)
 
     def word(self, input : str, word_slicing : tuple, print_path : bool = False):

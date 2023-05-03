@@ -121,8 +121,6 @@ class Text_generator():
             last = '' if bound[-1] == None else bound[-1]
             string += f'boundary {bound[0]} {bound[1]} {self.ilts(bound[2])} {bound[3]} {last}'
 
-
-
         if 'controls_hist' in self.dict:
             controls_hist = self.user_input.controls_hist
             string += f'\nhistory {self.ilts(controls_hist[0:3])}'
@@ -153,8 +151,6 @@ class Text_generator():
             string += '\n edits'
         string += '\n\ndump all'
 
-
-
         return string
     
     def pop_switches(self):
@@ -182,12 +178,14 @@ class Text_generator():
 
             for plot in self.user_input.plots:
                 
-                string += f'\nplot "{plot[0]}"\nsend-to-dump\n\txvar {plot[1]}\n\tyvar {plot[2]}'
+                string += f'\nplot "{plot[0]}"\n\txvar {plot[1]}\n\tyvar {plot[2]}'
 
                 if len(plot) == 8:
                     string += f'{self.ilts(plot[3:])}'
 
-        return string
+            return string
+        else:
+            return ''
 
     
     def execute(self):

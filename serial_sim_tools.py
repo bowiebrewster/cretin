@@ -50,7 +50,7 @@ def plot_all(foldername : str, trials : list):
     set_2d = set([item for sublist in keys2d for item in sublist])
     set_3d = set([item for sublist in keys3d for item in sublist])
 
-    path = f'{paths.to_folder_test()}{foldername}'
+    path = f'{paths.to_personal_data()}{foldername}'
     print(f'multiplot to {path}')
     if os.path.exists(path):
         shutil.rmtree(path) 
@@ -69,7 +69,7 @@ def plot_all(foldername : str, trials : list):
 
 def plot(name : str, plot_duplicates : bool):
     # finding d file
-    path_test = paths.to_folder_test()
+    path_test = paths.to_personal_data()
     os.chdir(path_test + '/' + name)
     file_list = glob.glob('*.d*')
 

@@ -1,17 +1,13 @@
 from importlib import reload
-import paths #these python classes should be in the same folder as cretin_main
-for obj in [paths]:
-    reload(obj)
+import paths 
+reload(paths)
 import numpy as np
-import os, shutil
 import matplotlib.pyplot as plt
-import pandas as pd
 
-# this is an absolute monstrosity of string manipulation, do not judge me father.
+# for .plt files created by cretin we extract the data here
+path = paths.to_personal_data()
 
-path = paths.to_folder_test()
-
-
+# this is an absolute monstrosity of string manipulation
 def restructure(line : str, count : int):
     if line[0] == '#':
         name = line.split(' ')[1]
@@ -33,9 +29,6 @@ def restructure(line : str, count : int):
         vars = [plot_count] + vars
 
         vars = tuple(vars)
-
-
-
         data[vars] = []
 
     if line[0] not in ['$', '#'] and 'vars' in globals():
@@ -83,7 +76,7 @@ def txt_to_plot(folder_name : str, multiplot : bool = False):
         plt.savefig(f'{folder}/images/{key}.png')
         plt.clf()
         plt.close()
-                    
+
+    del data, start_lines, plot_count                    
 
 
-df = txt_to_plot('trial1', multiplot = True)
