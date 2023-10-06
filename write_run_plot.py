@@ -33,7 +33,7 @@ def run(name : str, longprint : bool):
     path = f'{paths.to_personal_data()}{name}'
 
     env["ARG_NAME0"] = name
-    env["ARG_NAME1"] = f'{paths.to_personal_data()}{name}'
+    env["ARG_NAME1"] = path
 
     process = subprocess.Popen(paths.to_folder_cretin() + 'demo.sh', shell = True , stdout = subprocess.PIPE, stderr = subprocess.PIPE, env = env)
     process.wait() # Wait for process to complete.
@@ -71,10 +71,12 @@ naming_dict = {
 "radiation" : "jnu + jbar",
 "drat" : "mesh + kappa_sp + emis_sp + velocity"
 }
+
 def dump_path(name : str):
     path_test = paths.to_personal_data()
     os.chdir(f'{path_test}/{name}')
-    file_list = glob.glob('*.d*')
+    file_list = glob.glob('*.d0*')
+    print("file list",file_list)
     fullpath = f'{path_test}/{name}/{file_list[0]}'
     return fullpath
 
@@ -95,7 +97,7 @@ def blacklist_key(key : str):
 
 def plot(name : str, longprint : bool, plot_duplicates : bool):
     fullpath = dump_path(name)
-
+    print(name, fullpath)
     with h5py.File(fullpath, 'r') as f:
         path = paths.to_personal_data() + name + '/images'
         if os.path.exists(path):
@@ -110,22 +112,25 @@ def plot(name : str, longprint : bool, plot_duplicates : bool):
 
         for key, value in f.items():
             arr = np.array(f[key])
-
+            dim = len(arr.shape)
             
             if longprint: 
                 print(f'plot nr \t {counter} \t {key} \t {np.shape(arr)}')
             
+            
             # these never need to be plot
             if blacklist_key(key):
                 pass
-            elif len(arr.shape) == 0:
+            elif dim == 0:
                 pass
 
-            elif len(arr.shape) == 1 and len(arr) > 0:
+            elif dim == 1 and len(arr) > 0:
                 plot2d(path, key, longprint, plot_duplicates, arr)
 
-            elif len(arr.shape) == 2 or len(arr.shape) == 3:
+            elif dim == 2:
                 plot3d(path, key, longprint, plot_duplicates, arr)
+            #elif dim == 3:
+            #    plot3d(path, key, longprint, plot_duplicates, arr)
 
             else:
                 print(f'{key} has shape {arr.shape} and has not been plot')

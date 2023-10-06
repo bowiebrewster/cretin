@@ -157,13 +157,14 @@ class Text_generator():
         if 'pop_switches' not in self.dict:
             return ''
         pop = self.user_input.pop_switches
+        print('pop_switches' not in self.dict, pop)
         string = self.start_chapter('Switches and Parameters')
         for string0 in pop:
             if string0 != None:
                 string += f'\n{string0}'
     
         if 'pop_parameters' not in self.dict:
-            return ''
+            return string
         wob = self.user_input.pop_parameters
 
         for string0 in wob:

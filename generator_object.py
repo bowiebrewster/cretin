@@ -137,28 +137,24 @@ class User_input():
     def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
+        self.lasray_lis = []
 
-        self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes])
+        self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes, self.lasray_lis])
     
     def source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes])
+        self.lasray_lis = []
+        self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes, self.lasray_lis])
 
     def source_jnu(self, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.sources.append(['jnu', E_range, option_1, option_2, values, nodes])
+        self.lasray_lis = []
+        self.sources.append(['jnu', E_range, option_1, option_2, values, nodes, self.lasray_lis])
 
-
-    #def laser(self, index: int, wavelength : float, option_1 : str, option_2 : str, value : float, mul: float):
-    #    self.las = [index, wavelength, option_1, option_2, value, mul]
-    #    self.lasray = []
-
-    #def raytrace(self):
-    #    pass
 
     def source_rswitch(self, c_is_inf : bool = None, assume_NLTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
