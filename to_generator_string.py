@@ -33,11 +33,20 @@ class Text_generator():
 
         # materials_atom
         for atom in atoms:
-            atom0, modeltpye = atom
+            atom0, modeltype = atom
             if atom0[2] == None:
                 atom0[2] == ''
             line = f'atoms hydrogenic_{atom0[1]} {atom0[0]} \n'
             string += line
+
+            modeltype0 = modeltype[0]
+            if len(modeltype0)>0:
+                line = f'\tmodeltype '
+                print(modeltype0, modeltype)
+                for model in modeltype0:
+                    if model != None:
+                        line +=f' {model}'
+                string += line
 
         for region in regions:
             region0, element_of_region, material_of_region, rho_of_region, background_of_region = region

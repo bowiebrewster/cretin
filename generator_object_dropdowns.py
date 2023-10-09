@@ -23,18 +23,18 @@ class User_input():
     def drop_source_jnu(self):
         # Create interactive widgets for all arguments
         self.E_range_input = widgets.Text(
-            description="E_range (list):",
-            placeholder="[1, 2, 3]",
+            description="Energy range (list):",
+            placeholder="[1, 2]",
             layout=widgets.Layout(width="200px"))
 
         self.option_1_dropdown = widgets.Dropdown(
             options=['value', 'rate', 'integral', 'initial'],
-            description="option_1:",
+            description="option 1:",
             layout=widgets.Layout(width="200px"))
 
         self.option_2_dropdown = widgets.Dropdown(
             options=['xfile', 'history', 'profile', 'svlist', 'constant'],
-            description="option_2:",
+            description="option 2:",
             layout=widgets.Layout(width="200px"))
 
         self.values_input = widgets.Text(
@@ -47,7 +47,7 @@ class User_input():
             placeholder="[A, B, C]",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add jnu source")
         def on_button_click(b):
             E_range_value = eval(self.E_range_input.value)
             option_1_value = self.option_1_dropdown.value
@@ -63,7 +63,7 @@ class User_input():
 
 
         # Display the widgets
-        display(HBox([self.E_range_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button]))
+        display(HBox([self.E_range_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button],layout = widgets.Layout(flex_flow='wrap')))
 
 
     def drop_source_jbndry(self):
@@ -75,8 +75,8 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.E_range_input = widgets.Text(
-            description="E_range (list):",
-            placeholder="[1, 2, 3]",
+            description="Energy range (list):",
+            placeholder="[1, 2]",
             layout=widgets.Layout(width="200px"))
 
         self.option_1_dropdown = widgets.Dropdown(
@@ -99,7 +99,7 @@ class User_input():
             placeholder="[A, B, C]",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add jbndry source")
 
         # Define your function
         def on_button_click(b):
@@ -117,25 +117,25 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets
-        display(HBox([self.index_input, self.E_range_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button]))
+        display(HBox([self.index_input, self.E_range_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
 
     def drop_source_laser(self):
 
         # Create interactive widgets for all arguments
         self.laser_wavelength_input = widgets.FloatText(
-            description="laser_wavelength:",
+            description="laser wavelength:",
             value=0.0,
             layout=widgets.Layout(width="200px"))
 
         self.option_1_dropdown = widgets.Dropdown(
             options=['value', 'rate', 'integral', 'initial'],
-            description="option_1:",
+            description="option 1:",
             layout=widgets.Layout(width="200px"))
 
         self.option_2_dropdown = widgets.Dropdown(
             options=['xfile', 'history', 'profile', 'svlist', 'constant'],
-            description="option_2:",
+            description="option 2:",
             layout=widgets.Layout(width="200px"))
 
         self.values_input = widgets.Text(
@@ -148,7 +148,7 @@ class User_input():
             placeholder="[A, B, C]",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add laser source")
 
         # Define your function
         def on_button_click(b):
@@ -165,55 +165,7 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets
-        display(self.laser_wavelength_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button)
-
-
-    def drop_source_laser(self):
-
-        # Create interactive widgets for all arguments
-        self.laser_wavelength_input = widgets.FloatText(
-            description="laser_wavelength:",
-            value=0.0,
-            layout=widgets.Layout(width="200px"))
-
-        self.option_1_dropdown = widgets.Dropdown(
-            options=['value', 'rate', 'integral', 'initial'],
-            description="option_1:",
-            layout=widgets.Layout(width="200px"))
-
-        self.option_2_dropdown = widgets.Dropdown(
-            options=['xfile', 'history', 'profile', 'svlist', 'constant'],
-            description="option_2:",
-            layout=widgets.Layout(width="200px"))
-
-        self.values_input = widgets.Text(
-            description="values (list):",
-            placeholder="[10, 20, 30]",
-            layout=widgets.Layout(width="200px"))
-
-        self.nodes_input = widgets.Text(
-            description="nodes (list):",
-            placeholder="[A, B, C]",
-            layout=widgets.Layout(width="200px"))
-
-        self.button = widgets.Button(description="Call Function")
-
-        # Define your function
-        def on_button_click(b):
-            laser_wavelength_value = self.laser_wavelength_input.value
-            option_1_value = self.option_1_dropdown.value
-            option_2_value = self.option_2_dropdown.value
-            values_value = eval(self.values_input.value)
-            nodes_value = eval(self.nodes_input.value)
-
-            lasray_lis = []
-            data = ['laser', laser_wavelength_value, option_1_value, option_2_value, values_value, nodes_value, lasray_lis]
-            self.sources.append(data)
-
-        self.button.on_click(on_button_click)
-
-        # Display the widgets within an HBox
-        display(widgets.HBox([self.laser_wavelength_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button]))
+        display(widgets.HBox([self.laser_wavelength_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_source_boundary(self):
 
@@ -224,7 +176,7 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.type_dropdown = widgets.Dropdown(
-            options=['streaming', 'milne', 'value'],
+            options=["value","gradient", "flux", "reflecting", "mirror", "milne", "isotropic", "streaming","recycling"],
             description="type:",
             layout=widgets.Layout(width="200px"))
 
@@ -243,7 +195,7 @@ class User_input():
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Specifiy boundary conditions for package-type pairing", layout=widgets.Layout(width="400px"))
 
         # Define your function
         def on_button_click(b):
@@ -263,33 +215,33 @@ class User_input():
             self.source_bound = [package_value, type_value, nodes_value, mult_value, value_value]
             lasray_lis = []
             data = ['boundary', self.source_bound, lasray_lis]
-            self.sources.append(data)
+            self.source_boundaries = data
 
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.package_dropdown, self.type_dropdown, self.nodes_input, self.value_input, self.mult_input, self.button]))
+        display(widgets.HBox([self.package_dropdown, self.type_dropdown, self.nodes_input, self.value_input, self.mult_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_geometry_quad(self):
 
         # Create interactive widgets for all arguments
         self.node_1_input = widgets.Text(
-            description="node_1 (list):",
+            description="node 1 (list):",
             placeholder="[x1, y1]",
             layout=widgets.Layout(width="200px"))
 
         self.node_2_input = widgets.Text(
-            description="node_2 (list):",
+            description="node 2 (list):",
             placeholder="[x2, y2]",
             layout=widgets.Layout(width="200px"))
 
         self.x_cors_input = widgets.Text(
-            description="x_cors (list):",
+            description="x cors (list):",
             placeholder="[x1, x2]",
             layout=widgets.Layout(width="200px"))
 
         self.y_cors_input = widgets.Text(
-            description="y_cors (list):",
+            description="y cors (list):",
             placeholder="[y1, y2]",
             layout=widgets.Layout(width="200px"))
 
@@ -298,7 +250,7 @@ class User_input():
             placeholder="[ratio1, ratio2]",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add quad geometry")
 
         # Define your function
         def on_button_click(b):
@@ -313,17 +265,17 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.node_1_input, self.node_2_input, self.x_cors_input, self.y_cors_input, self.ratios_input, self.button]))
+        display(widgets.HBox([self.node_1_input, self.node_2_input, self.x_cors_input, self.y_cors_input, self.ratios_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_geometry_product_mesh(self):
 
         # Create interactive widgets for all arguments
         self.product_mesh_checkbox = widgets.Checkbox(
-            description="product_mesh",
+            description="Make 2d/3d mesh from 1d meshing command",
             value=False,
-            layout=widgets.Layout(width="200px"))
+            layout=widgets.Layout(width="400px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add product mesh")
 
         # Define your function
         def on_button_click(b):
@@ -333,13 +285,13 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.product_mesh_checkbox, self.button]))
+        display(widgets.HBox([self.product_mesh_checkbox, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_radiation_ebins(self):
 
         # Create interactive widgets for all arguments
         self.n_boundaries_input = widgets.IntText(
-            description="n_boundaries:",
+            description="number of group boundaries:",
             value=0,
             layout=widgets.Layout(width="200px"))
 
@@ -358,7 +310,7 @@ class User_input():
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Define group structure for continuum radiation",layout=widgets.Layout(width="300px"))
 
         # Define your function
         def on_button_click(b):
@@ -372,22 +324,22 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.n_boundaries_input, self.start_input, self.end_input, self.ratio_input, self.button]))
+        display(widgets.HBox([self.n_boundaries_input, self.start_input, self.end_input, self.ratio_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_radiation_angles(self):
 
         # Create interactive widgets for all arguments
         self.n_rays_input = widgets.IntText(
-            description="n_rays:",
+            description="number of rays:",
             value=0,
             layout=widgets.Layout(width="200px"))
 
         self.n_angles_input = widgets.IntText(
-            description="n_angles (optional):",
+            description="number of angles (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Set rays for transfer problems")
 
         # Define your function
         def on_button_click(b):
@@ -399,7 +351,7 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.n_rays_input, self.n_angles_input, self.button]))
+        display(widgets.HBox([self.n_rays_input, self.n_angles_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_radiation_line(self):
 
@@ -415,16 +367,16 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.lower_state_input = widgets.Text(
-            description="lower_state (list):",
+            description="lower state (list):",
             placeholder="[state1, state2]",
             layout=widgets.Layout(width="200px"))
 
         self.higher_state_input = widgets.Text(
-            description="higher_state (list):",
+            description="higher state (list):",
             placeholder="[state3, state4]",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Define radiative transiition", layout=widgets.Layout(width="200px"))
 
         # Define your function
         def on_button_click(b):
@@ -439,59 +391,80 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.index_input, self.model_input, self.lower_state_input, self.higher_state_input, self.button]))
+        display(widgets.HBox([self.index_input, self.model_input, self.lower_state_input, self.higher_state_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_radiation_lbins(self):
-
         # Create interactive widgets for all arguments
         self.n_bins_input = widgets.IntText(
-            description="n_bins:",
-            value=0,
+            description="Number of Bins:",
             layout=widgets.Layout(width="200px"))
 
-        self.energy_span_1_input = widgets.FloatText(
-            description="energy_span_1:",
-            value=0.0,
+        self.energy_span1_input = widgets.FloatText(
+            description="Energy Span 1:",
             layout=widgets.Layout(width="200px"))
 
         self.ratio_width1_input = widgets.FloatText(
-            description="ratio_width1:",
-            value=0.0,
+            description="Ratio Width 1:",
             layout=widgets.Layout(width="200px"))
 
-        self.energy_span_2_input = widgets.FloatText(
-            description="energy_span_2 (optional):",
-            value=None,
+        self.energy_span2_input = widgets.FloatText(
+            description="Energy Span 2:",
             layout=widgets.Layout(width="200px"))
 
         self.ratio_width2_input = widgets.FloatText(
-            description="ratio_width2 (optional):",
-            value=None)
+            description="Ratio Width 2:",
+            layout=widgets.Layout(width="200px"))
+
+        self.button = widgets.Button(description="Define bin structure")
+
+        # Define your function
+        def on_button_click(b):
+            n_bins_value = self.n_bins_input.value
+            energy_span1_value = self.energy_span1_input.value
+            ratio_width1_value = self.ratio_width1_input.value
+            energy_span2_value = self.energy_span2_input.value
+            ratio_width2_value = self.ratio_width2_input.value
+
+            lbins_data = [n_bins_value, energy_span1_value, ratio_width1_value, energy_span2_value, ratio_width2_value]
+            self.rad_lbins.append(lbins_data)
+
+            # Clear input fields after adding the bins
+            self.n_bins_input.value = None
+            self.energy_span1_input.value = None
+            self.ratio_width1_input.value = None
+            self.energy_span2_input.value = None
+            self.ratio_width2_input.value = None
+
+        self.button.on_click(on_button_click)
+
+        # Display the widgets
+        display(HBox([self.n_bins_input, self.energy_span1_input, self.ratio_width1_input,
+                      self.energy_span2_input, self.ratio_width2_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_region_material(self):
 
         # Create interactive widgets for all arguments
         self.rho_input = widgets.FloatText(
-            description="rho:",
-            value=0.0,
+            description="density:",
+            value=6.9,
             layout=widgets.Layout(width="200px"))
 
         self.atom_n_input = widgets.FloatText(
-            description="atom_n:",
-            value=0.0,
+            description="atom n:",
+            value=1,
             layout=widgets.Layout(width="200px"))
 
         self.charge_avg_input = widgets.FloatText(
-            description="charge_avg:",
-            value=0.0,
+            description="average charge Z:",
+            value=11,
             layout=widgets.Layout(width="200px"))
 
         self.charge_avg_squared_input = widgets.FloatText(
-            description="charge_avg_squared:",
-            value=0.0,
+            description="average charge squared:",
+            value=121,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add material to region")
 
         # Define your function
         def on_button_click(b):
@@ -505,37 +478,37 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.rho_input, self.atom_n_input, self.charge_avg_input, self.charge_avg_squared_input, self.button]))
+        display(widgets.HBox([self.rho_input, self.atom_n_input, self.charge_avg_input, self.charge_avg_squared_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_region_background(self):
 
         # Create interactive widgets for all arguments
         self.ion_density_input = widgets.FloatText(
-            description="ion_density:",
+            description="ion density:",
             value=0.0,
             layout=widgets.Layout(width="200px"))
 
         self.electron_density_input = widgets.FloatText(
-            description="electron_density:",
+            description="electron density:",
             value=0.0,
             layout=widgets.Layout(width="200px"))
 
         self.avg_atomic_number_input = widgets.FloatText(
-            description="avg_atomic_number:",
+            description="avg atomic number:",
             value=0.0,
             layout=widgets.Layout(width="200px"))
 
         self.average_charge_input = widgets.FloatText(
-            description="average_charge:",
+            description="average charge Z:",
             value=0.0,
             layout=widgets.Layout(width="200px"))
 
         self.average_charge_squared_input = widgets.FloatText(
-            description="average_charge_squared:",
+            description="average charge squared:",
             value=0.0,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add region backgrond")
 
         # Define your function
         def on_button_click(b):
@@ -550,27 +523,27 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.ion_density_input, self.electron_density_input, self.avg_atomic_number_input, self.average_charge_input, self.average_charge_squared_input, self.button]))
+        display(widgets.HBox([self.ion_density_input, self.electron_density_input, self.avg_atomic_number_input, self.average_charge_input, self.average_charge_squared_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_region_opacity(self):
 
         # Create interactive widgets for all arguments
         self.form_dropdown = widgets.Dropdown(
-            options=['constant', 'power-law', 'exponential', 'gaussian', 'cutoff'],
+            options=['constant: p1', 'power-law: p1 ρ^p2 T^p3 Exp(p4)', 'exponential: p1 ρ^p2 T^p3 Exp(-(e-p4)/p5)', 'gaussian: p1 ρ^p2 T^p3 Exp(-(e-p4)/p5)^2','cosine: p1 ρ^p2 T^p3 Cos(-(e-p4)/p5)', 'cutoff: p1 p5 ρ^p2 T^p3 e^p4, p5=1 if e < p6,'],
             description="form:",
             layout=widgets.Layout(width="200px"))
 
         self.p_vals_input = widgets.Text(
-            description="p_vals (list):",
-            placeholder="[p1, p2]",
+            description="p values (list):",
+            placeholder="[p1, p2...]",
             layout=widgets.Layout(width="200px"))
 
         self.e_vals_input = widgets.Text(
-            description="e_vals (list):",
+            description="valid photon energy range (list):",
             placeholder="[e1, e2]",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Set opacity behaviour")
 
         # Define your function
         def on_button_click(b):
@@ -585,7 +558,7 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.form_dropdown, self.p_vals_input, self.e_vals_input, self.button]))
+        display(widgets.HBox([self.form_dropdown, self.p_vals_input, self.e_vals_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_region_level(self):
 
@@ -596,7 +569,7 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.isoelectronic_sequence_input = widgets.IntText(
-            description="isoelectronic_sequence:",
+            description="isoelectronic sequence:",
             value=0,
             layout=widgets.Layout(width="200px"))
 
@@ -606,27 +579,35 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.iso_range_input = widgets.Text(
-            description="iso_range (list, optional):",
+            description="iso range (list, optional):",
             placeholder="[iso1, iso2]",
             layout=widgets.Layout(width="200px"))
+        
+        self.ion_density = widgets.Text(
+            description="ion density",
+            placeholder="6.9",
+            layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+
+        self.button = widgets.Button(description="Assign ion population to element iso-sequnce pair",layout=widgets.Layout(width="350px"))
 
         # Define your function
         def on_button_click(b):
             index_value = self.index_input.value
             isoelectronic_sequence_value = self.isoelectronic_sequence_input.value
             level_value = self.level_input.value
+            ion_density = self.ion_density.value
             iso_range_value = eval(self.iso_range_input.value) if self.iso_range_input.value else None
 
             list_input_requirement([iso_range_value])
 
-            self.level_of_region.append([index_value, isoelectronic_sequence_value, level_value, iso_range_value])
+            self.level_of_region.append([index_value, isoelectronic_sequence_value, level_value, ion_density, iso_range_value])
 
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.index_input, self.isoelectronic_sequence_input, self.level_input, self.iso_range_input, self.button]))
+        display(widgets.HBox([self.index_input, self.isoelectronic_sequence_input, self.level_input, self.ion_density, self.iso_range_input, self.button], 
+                             layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_geometry(self):
 
@@ -636,7 +617,7 @@ class User_input():
             description="type:",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add geometry")
 
         # Define your function
         def on_button_click(b):
@@ -658,7 +639,7 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.type_dropdown, self.button]))
+        display(widgets.HBox([self.type_dropdown, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_geometry_nodes(self):
 
@@ -670,7 +651,7 @@ class User_input():
 
         self.scaling_type_dropdown = widgets.Dropdown(
             options=['lin', 'log', 'geom', 'exp'],
-            description="scaling_type:",
+            description="scaling type:",
             layout=widgets.Layout(width="200px"))
 
         self.nodes_input = widgets.Text(
@@ -679,7 +660,7 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.nodes_range_input = widgets.Text(
-            description="nodes_range (list):",
+            description="nodes range (list):",
             placeholder="[nstart, nend]",
             layout=widgets.Layout(width="200px"))
 
@@ -698,7 +679,7 @@ class User_input():
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add nodes")
 
         # Define your function
         def on_button_click(b):
@@ -725,27 +706,28 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.coordinate_dropdown, self.scaling_type_dropdown, self.nodes_input, self.nodes_range_input, self.ratio_input, self.drmin_input, self.slope_input, self.button]))
+        display(widgets.HBox([self.coordinate_dropdown, self.scaling_type_dropdown, self.nodes_input, self.nodes_range_input, self.ratio_input, self.drmin_input, self.slope_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_atom(self):
 
         # Create interactive widgets for all arguments
         self.element_input = widgets.Text(
             description="element:",
+            placeholder="H",
             layout=widgets.Layout(width="200px"))
 
         self.quantum_n_max_input = widgets.IntText(
             description="quantum_n_max (optional):",
-            value=10,
+            value=3,
             layout=widgets.Layout(width="200px"))
 
         self.iso_min_input = widgets.IntText(
-            description="iso_min (optional):",
+            description="iso sequence min (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
         self.iso_max_input = widgets.IntText(
-            description="iso_max (optional):",
+            description="iso sequence max (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
@@ -754,7 +736,7 @@ class User_input():
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add atom")
 
         # Define your function
         def on_button_click(b):
@@ -773,7 +755,7 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.element_input, self.quantum_n_max_input, self.iso_min_input, self.iso_max_input, self.index_input, self.button]))
+        display(widgets.HBox([self.element_input, self.quantum_n_max_input, self.iso_min_input, self.iso_max_input, self.index_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_atom_modeltype(self):
 
@@ -784,26 +766,41 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.type2_dropdown = widgets.Dropdown(
-            options=['fly', 'term', 'dca', 'radonly', 'sublevel', 'johnson'],
-            description="type2:",
+            options=[None,'fly', 'term', 'dca', 'radonly', 'sublevel', 'johnson'],
+            description="type2: optional",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.type3_dropdown = widgets.Dropdown(
+            options=[None,'fly', 'term', 'dca', 'radonly', 'sublevel', 'johnson'],
+            description="type3: optional",
+            layout=widgets.Layout(width="200px"))
+        
+        self.type4_dropdown = widgets.Dropdown(
+            options=[None,'fly', 'term', 'dca', 'radonly', 'sublevel', 'johnson'],
+            description="type4: optional",
+            layout=widgets.Layout(width="200px"))
+
+
+        self.button = widgets.Button(description="Add screened hydrogenic modeltype", layout=widgets.Layout(width="300px"))
 
         # Define your function
         def on_button_click(b):
             type1_value = self.type1_dropdown.value
             type2_value = self.type2_dropdown.value
+            type3_value = self.type3_dropdown.value
+            type4_value = self.type4_dropdown.value
 
             string_input_requirement(type1_value, ['fly', 'term', 'dca', 'radonly', 'sublevel', 'johnson'])
-            string_input_requirement(type2_value, ['fly', 'term', 'dca', 'radonly', 'sublevel', 'johnson'])
 
-            self.modeltype_of_atom.append([type1_value, type2_value])
+            try:
+                self.modeltype_of_atom.append([type1_value, type2_value, type3_value, type4_value])
+            except:
+                raise Exception('first define an atom using materials atom')
 
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.type1_dropdown, self.type2_dropdown, self.button]))
+        display(widgets.HBox([self.type1_dropdown, self.type2_dropdown, self.type3_dropdown, self.type4_dropdown, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_region(self):
 
@@ -814,21 +811,21 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.elec_temp_input = widgets.FloatText(
-            description="elec_temp:",
-            value=0.0,
+            description="elec temp(ev):",
+            value=1,
             layout=widgets.Layout(width="200px"))
 
         self.ion_temp_input = widgets.FloatText(
-            description="ion_temp (optional):",
-            value=None,
+            description="ion temp(ev)(optional):",
+            value=1,
             layout=widgets.Layout(width="200px"))
 
         self.rad_temp_input = widgets.FloatText(
-            description="rad_temp (optional):",
-            value=None,
+            description="rad_temp(ev)(optional):",
+            value=1,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add region temperature",layout=widgets.Layout(width="200px"))
 
         # Define your function
         def on_button_click(b):
@@ -849,7 +846,7 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.nodes_input, self.elec_temp_input, self.ion_temp_input, self.rad_temp_input, self.button]))
+        display(widgets.HBox([self.nodes_input, self.elec_temp_input, self.ion_temp_input, self.rad_temp_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_region_rho(self):
 
@@ -859,7 +856,7 @@ class User_input():
             value=0.0,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Assign mass density to region")
 
         # Define your function
         def on_button_click(b):
@@ -870,34 +867,71 @@ class User_input():
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
-        display(widgets.HBox([self.rho_input, self.button]))
+        display(widgets.HBox([self.rho_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_materials_region_element(self):
-
         # Create interactive widgets for all arguments
-        self.initial_ion_population_input = widgets.FloatText(
-            description="initial_ion_population:",
-            value=0.0,
-            layout=widgets.Layout(width="200px"))
-
         self.index_input = widgets.IntText(
-            description="index (optional):",
-            value=None,
+            description="Index:",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.initial_ion_population_input = widgets.FloatText(
+            description="Initial Ion Population:",
+            layout=widgets.Layout(width="200px"))
+
+        self.isoelectronic_sequence_input = widgets.Text(
+            description="Isoelectronic Sequence(optional):",
+            placeholder="[1, 2, 3]",
+            layout=widgets.Layout(width="200px"))
+
+        self.use_lte_checkbox = widgets.Checkbox(
+            value=False,
+            description="Use LTE",
+            layout=widgets.Layout(width="200px"))
+
+        self.electron_temp_input = widgets.FloatText(
+            description="Electron Temperature(optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.ion_temp_input = widgets.FloatText(
+            description="Ion Temperature(optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.ion_velocities_input = widgets.FloatText(
+            description="Ion Velocities(optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.button = widgets.Button(description="Add Element")
 
         # Define your function
         def on_button_click(b):
+            index_value = self.index_input.value
             initial_ion_population_value = self.initial_ion_population_input.value
-            index_value = self.index_input.value if self.index_input.value is not None else None
+            isoelectronic_sequence_value = eval(self.isoelectronic_sequence_input.value)
+            use_lte_value = self.use_lte_checkbox.value
+            electron_temp_value = self.electron_temp_input.value
+            ion_temp_value = self.ion_temp_input.value
+            ion_velocities_value = self.ion_velocities_input.value
 
-            self.elements_of_region.append([index_value, initial_ion_population_value])
+            element_data = [index_value, initial_ion_population_value, isoelectronic_sequence_value,
+                            use_lte_value, electron_temp_value, ion_temp_value, ion_velocities_value]
+            self.elements_of_region.append(element_data)
+
+            # Clear input fields after adding the element
+            self.index_input.value = None
+            self.initial_ion_population_input.value = None
+            self.isoelectronic_sequence_input.value = ""
+            self.use_lte_checkbox.value = False
+            self.electron_temp_input.value = None
+            self.ion_temp_input.value = None
+            self.ion_velocities_input.value = None
 
         self.button.on_click(on_button_click)
 
-        # Display the widgets within an HBox
-        display(widgets.HBox([self.initial_ion_population_input, self.index_input, self.button]))
+        # Display the widgets
+        display(HBox([self.index_input, self.initial_ion_population_input, self.isoelectronic_sequence_input,
+                      self.use_lte_checkbox, self.electron_temp_input, self.ion_temp_input, self.ion_velocities_input,
+                      self.button],layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_source_rswitch(self):
 
@@ -944,7 +978,7 @@ class User_input():
             description="use_flux_limiting",
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add rswitches")
 
         # Define your function
         def on_button_click(b):
@@ -990,33 +1024,33 @@ class User_input():
         # Display the widgets within an HBox
         display(widgets.HBox([self.c_is_inf_checkbox, self.assume_NLTE_checkbox, self.radiation_transfer_algorithm1d_dropdown, 
                               self.radiation_transfer_algorithm2d_dropdown, self.max_iter_intensities_temp_input, 
-                              self.multi_group_acceleration_dropdown, self.use_flux_limiting_checkbox, self.button]))
+                              self.multi_group_acceleration_dropdown, self.use_flux_limiting_checkbox, self.button],layout = widgets.Layout(flex_flow='wrap')))
 
     def drop_popular_switches(self):
 
         # Create interactive widgets for all arguments
         self.include_degeneracy_dropdown = widgets.Dropdown(
             options=['include electron degeneracy', 'ignore additional correction for ionizations', 'integrate collisional ionizations numerically', 'integrate collisional excitations numerically'],
-            description="include_degeneracy:",
+            description="include degeneracy:",
             layout=widgets.Layout(width="200px"))
 
         self.timestep_type_dropdown = widgets.Dropdown(
             options=['use constant timesteps', 'use_dynamic_timesteps'],
-            description="timestep_type:",
+            description="timestep type:",
             layout=widgets.Layout(width="200px"))
 
         self.continuum_transfer_dropdown = widgets.Dropdown(
             options=['do steady-state continuum transfer', 'do time-dependent continuum transfer', 'do steady-state and use Feautrier formalism', 'do steady-state and use integral formalism formalism'],
-            description="continuum_transfer:",
+            description="continuum transfer:",
             layout=widgets.Layout(width="200px"))
 
         self.continuum_transfer_evolves_temp_checkbox = widgets.Checkbox(
             value=False,
-            description="continuum_transfer_evolves_temp",
+            description="continuum transfer_evolves_temp",
             layout=widgets.Layout(width="200px"))
 
         self.timestep_between_snapshot_input = widgets.IntText(
-            description="timestep_between_snapshot (optional):",
+            description="timestep between_snapshot (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
@@ -1027,12 +1061,12 @@ class User_input():
 
         self.initialization_control_dropdown = widgets.Dropdown(
             options=['LTE at fixed electron density', 'LTE at fixed ion density', 'steady-state w/ radiation transfer', 'steady-state kinetics w/o radiation transfer', 'no kinetics', 'broadcast boundary radiation', 'none'],
-            description="initialization_control:",
+            description="initialization control:",
             layout=widgets.Layout(width="200px"))
 
         self.continuum_lowering_control_dropdown = widgets.Dropdown(
             options=['approximate accounting for missing Rydberg levels', 'no continuum lowering', 'Stewart-Pyatt with formula for degeneracy lowering', 'Stewart-Pyatt with microfield degeneracy lowering', 'microfield degeneracy lowering w/o continuum lowering', 'SP/EK w/o degeneracy lowering', 'use maximum of SP/EK and approximate accounting'],
-            description="continuum_lowering_control:",
+            description="continuum lowering control:",
             layout=widgets.Layout(width="200px"))
 
         self.raytrace_checkbox = widgets.Checkbox(
@@ -1042,15 +1076,15 @@ class User_input():
 
         self.temparture_calc_heating_rates_dropdown = widgets.Dropdown(
             options=['temp calc = none', 'temp calc = time dependant', 'temp calc = steady state'],
-            description="temparture_calc_heating_rates (list):",
+            description="temparture calc heating rates (list):",
             layout=widgets.Layout(width="200px"))
 
         self.max_iterations_per_timestep_input = widgets.IntText(
-            description="max_iterations_per_timestep (optional):",
+            description="max iterations per timestep (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add switches")
 
         # Define your function
         def on_button_click(b):
@@ -1095,38 +1129,38 @@ class User_input():
         # Display the widgets
         display(HBox([self.include_degeneracy_dropdown, self.timestep_type_dropdown, self.continuum_transfer_dropdown, self.continuum_transfer_evolves_temp_checkbox,
                       self.timestep_between_snapshot_input, self.kinematics_dropdown, self.initialization_control_dropdown, self.continuum_lowering_control_dropdown,
-                      self.raytrace_checkbox, self.temparture_calc_heating_rates_dropdown, self.max_iterations_per_timestep_input, self.button]))
+                      self.raytrace_checkbox, self.temparture_calc_heating_rates_dropdown, self.max_iterations_per_timestep_input, self.button],layout = widgets.Layout(flex_flow='wrap')))
 
 
     def drop_parameters(self):
 
         # Create interactive widgets for all arguments
         self.scattering_muliplier_input = widgets.FloatText(
-            description="scattering_muliplier (optional):",
+            description="scattering muliplier (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
         self.initial_timestep_input = widgets.FloatText(
-            description="initial_timestep (optional):",
+            description="initial timestep (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
         self.minimum_timestep_input = widgets.FloatText(
-            description="minimum_timestep (optional):",
+            description="minimum timestep (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
         self.maximum_timestep_input = widgets.FloatText(
-            description="maximum_timestep (optional):",
+            description="maximum timestep (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
         self.time_between_snapshots_input = widgets.FloatText(
-            description="time_between_snapshots (optional):",
+            description="time between_snapshots (optional):",
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add paramters")
 
         # Define your function
         def on_button_click(b):
@@ -1155,7 +1189,7 @@ class User_input():
         # Create interactive widgets for all arguments
         self.name_input = widgets.Text(
             description="name (str):",
-            placeholder="plot_name",
+            placeholder="plot name",
             layout=widgets.Layout(width="200px"))
 
         self.xvar_dropdown = widgets.Dropdown(
@@ -1175,8 +1209,8 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.element_or_transition_input = widgets.Text(
-            description="element_or_transition (str, optional):",
-            placeholder="element_or_transition",
+            description="element/transition (str, optional):",
+            placeholder="element/transition",
             layout=widgets.Layout(width="200px"))
 
         self.node_input = widgets.IntText(
@@ -1185,13 +1219,13 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.frequency_or_isosequence_input = widgets.Text(
-            description="frequency_or_isosequence (str, optional):",
-            placeholder="frequency_or_isosequence",
+            description="frequency/isosequence (str, optional):",
+            placeholder="frequency/isosequence",
             layout=widgets.Layout(width="200px"))
 
         self.direction_or_level_input = widgets.Text(
-            description="direction_or_level (str, optional):",
-            placeholder="direction_or_level",
+            description="direction/level (str, optional):",
+            placeholder="direction/level",
             layout=widgets.Layout(width="200px"))
 
         self.multiplier_input = widgets.FloatText(
@@ -1199,7 +1233,7 @@ class User_input():
             value=None,
             layout=widgets.Layout(width="200px"))
 
-        self.button = widgets.Button(description="Call Function")
+        self.button = widgets.Button(description="Add plot")
 
         # Define your function
         def on_button_click(b):
@@ -1233,7 +1267,7 @@ class User_input():
         # Display the widgets
         display(HBox([self.name_input, self.xvar_dropdown, self.yvar_dropdown, self.element_or_transition_input,
                       self.node_input, self.frequency_or_isosequence_input, self.direction_or_level_input,
-                      self.multiplier_input, self.button]))
+                      self.multiplier_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
 #################################################################################################################################################
 
@@ -1270,8 +1304,9 @@ class User_input():
     def materials_region_rho(self, rho : float):
         self.rho_of_region.append(rho)
 
-    def materials_region_element(self,  initial_ion_population : float, index : int = None):
-        self.elements_of_region.append([index, initial_ion_population])
+    def materials_region_element(self,  initial_ion_population : float, index : int = None, isoelectric_sequence : list = None,
+                                  use_lte:bool = False, electron_temp : float = None, ion_temp :float = None, ion_velocities :float = None):
+        self.elements_of_region.append([index, initial_ion_population, isoelectric_sequence, use_lte, electron_temp, ion_temp, ion_velocities])
 
     def materials_region_material(self, rho : float, atom_n : float, charge_avg : float, charge_avg_squared: float):
         self.material_of_region.append([rho, atom_n, charge_avg, charge_avg_squared])
