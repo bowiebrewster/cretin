@@ -23,7 +23,7 @@ class User_input():
     def drop_source_jnu(self):
         # Create interactive widgets for all arguments
         self.E_range_input = widgets.Text(
-            description="Energy range (list):",
+            description="energy range (list):",
             placeholder="[1, 2]",
             layout=widgets.Layout(width="200px"))
 
@@ -75,7 +75,7 @@ class User_input():
             layout=widgets.Layout(width="200px"))
 
         self.E_range_input = widgets.Text(
-            description="Energy range (list):",
+            description="energy range (list):",
             placeholder="[1, 2]",
             layout=widgets.Layout(width="200px"))
 
@@ -271,7 +271,7 @@ class User_input():
 
         # Create interactive widgets for all arguments
         self.product_mesh_checkbox = widgets.Checkbox(
-            description="Make 2d/3d mesh from 1d meshing command",
+            description="make 2d/3d mesh from 1d meshing command",
             value=False,
             layout=widgets.Layout(width="400px"))
 
@@ -396,23 +396,23 @@ class User_input():
     def drop_radiation_lbins(self):
         # Create interactive widgets for all arguments
         self.n_bins_input = widgets.IntText(
-            description="Number of Bins:",
+            description="number of Bins:",
             layout=widgets.Layout(width="200px"))
 
         self.energy_span1_input = widgets.FloatText(
-            description="Energy Span 1:",
+            description="energy Span 1:",
             layout=widgets.Layout(width="200px"))
 
         self.ratio_width1_input = widgets.FloatText(
-            description="Ratio Width 1:",
+            description="ratio Width 1:",
             layout=widgets.Layout(width="200px"))
 
         self.energy_span2_input = widgets.FloatText(
-            description="Energy Span 2:",
+            description="energy Span 2:",
             layout=widgets.Layout(width="200px"))
 
         self.ratio_width2_input = widgets.FloatText(
-            description="Ratio Width 2:",
+            description="ratio Width 2:",
             layout=widgets.Layout(width="200px"))
 
         self.button = widgets.Button(description="Define bin structure")
@@ -872,33 +872,33 @@ class User_input():
     def drop_materials_region_element(self):
         # Create interactive widgets for all arguments
         self.index_input = widgets.IntText(
-            description="Index:",
+            description="index:",
             layout=widgets.Layout(width="200px"))
 
         self.initial_ion_population_input = widgets.FloatText(
-            description="Initial Ion Population:",
+            description="initial Ion Population:",
             layout=widgets.Layout(width="200px"))
 
         self.isoelectronic_sequence_input = widgets.Text(
-            description="Isoelectronic Sequence(optional):",
+            description="isoelectronic Sequence(optional):",
             placeholder="[1, 2, 3]",
             layout=widgets.Layout(width="200px"))
 
         self.use_lte_checkbox = widgets.Checkbox(
             value=False,
-            description="Use LTE",
+            description="use LTE",
             layout=widgets.Layout(width="200px"))
 
         self.electron_temp_input = widgets.FloatText(
-            description="Electron Temperature(optional):",
+            description="electron Temperature(optional):",
             layout=widgets.Layout(width="200px"))
 
         self.ion_temp_input = widgets.FloatText(
-            description="Ion Temperature(optional):",
+            description="ion Temperature(optional):",
             layout=widgets.Layout(width="200px"))
 
         self.ion_velocities_input = widgets.FloatText(
-            description="Ion Velocities(optional):",
+            description="ion Velocities(optional):",
             layout=widgets.Layout(width="200px"))
 
         self.button = widgets.Button(description="Add Element")
