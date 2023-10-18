@@ -1214,7 +1214,7 @@ class User_input():
             temparture_calc_heating_rates_value = self.temparture_calc_heating_rates_dropdown.value
             max_iterations_per_timestep_value = self.max_iterations_per_timestep_input.value if self.max_iterations_per_timestep_input.value is not None else None
 
-            include_degeneracy_dict = {'include electron degeneracy': 0.5, 'ignore additional correction for ionizations': -0.5, 'integrate collisional ionizations numerically': 1.5, 'integrate collisional excitations numerically': 2.5}
+            include_degeneracy_dict = {'no degeneracy':0,'include electron degeneracy': 0.5, 'ignore additional correction for ionizations': -0.5, 'integrate collisional ionizations numerically': 1.5, 'integrate collisional excitations numerically': 2.5}
             time_step_dict = {'use constant timesteps': -1, 'use_dynamic_timesteps': 1}
             continuum_transfer_dict = {'do steady-state continuum transfer': 0.5, 'do time-dependent continuum transfer': -0.5, 'do steady-state and use Feautrier formalism': 1, 'do steady-state and use integral formalism formalism': 2}
             kinematics_dict = {'steady-state kinetics': 0, 'time-dependent kinetics': 0.5, 'use approx. LTE and QSS distributions to choose LTE or NLTE': 1.5, 'calculate approx. LTE and QSS distribution': -1, 'no kinetics': -1.5}
@@ -1591,8 +1591,8 @@ class User_input():
         if include_degeneracy == None:
             string0 = None
         else:
-            include_degeneracy_dict = {'include electron degeneracy' : .5,' ignore additional correction for ionizations' : -.5,
-                                       'integrate collisional ionizations numerically': 1.5,'integrate collisional excitations numerically': 2.5}
+            include_degeneracy_dict = {'no degeneracy':0,'include electron degeneracy': 0.5, 'ignore additional correction for ionizations': -0.5, 'integrate collisional ionizations numerically': 1.5, 'integrate collisional excitations numerically': 2.5}
+
             string_input_requirement(include_degeneracy, include_degeneracy_dict.keys())
             string0 = f'switch 151 {str(include_degeneracy_dict[include_degeneracy])}'
 
@@ -1698,7 +1698,7 @@ class User_input():
                                             'Ginzburg formula + smooth resonant absorption over neighboring zones':-1,
                                             'tabulated values': .5,
                                             'tabulated values + smooth resonant absorption over neighboring zones':-.5}
-        string3 = switch_format(population_calculation, resonant_absrption_fraction_dict, 47)
+        string3 = switch_format(resonant_absrption_fraction, resonant_absrption_fraction_dict, 47)
         thermal_conduction_dict = {
             'no thermal conduction': 0,
             'include thermal conduction': 1,
@@ -1820,5 +1820,5 @@ def switch_format(entry, dict, switch_nr):
         return None
     else:
         string_input_requirement(entry, dict.keys())
-        return f'switch {switch_nr} {dict[entry]})'
+        return f'switch {switch_nr} {dict[entry]}'
                 
