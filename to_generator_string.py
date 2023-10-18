@@ -42,7 +42,7 @@ class Text_generator():
             modeltype0 = modeltype[0]
             if len(modeltype0)>0:
                 line = f'\tmodeltype '
-                print(modeltype0, modeltype)
+
                 for model in modeltype0:
                     if model != None:
                         line +=f' {model}'
@@ -124,11 +124,20 @@ class Text_generator():
             else:
                 raise Exception("Source must be type 'jbndry', 'jnu' or 'laser' ")
             
+            lasrays = source[-1]
+            for lasray in lasrays:
+                string += f'\n\tlasray {self.ilts(lasray)}'
+            
             string += '\n'
         if 'source_bound' in self.dict:
             bound = self.user_input.source_bound
             last = '' if bound[-1] == None else bound[-1]
             string += f'boundary {bound[0]} {bound[1]} {self.ilts(bound[2])} {bound[3]} {last}'
+
+        if 'source_histories' in self.dict:
+            for entry in self.user_input.source_histories:
+                string += f'\nhistory {self.ilts(entry)}'
+
 
         if 'controls_hist' in self.dict:
             controls_hist = self.user_input.controls_hist
@@ -166,12 +175,16 @@ class Text_generator():
         if 'pop_switches' not in self.dict:
             return ''
         pop = self.user_input.pop_switches
-        print('pop_switches' not in self.dict, pop)
+
         string = self.start_chapter('Switches and Parameters')
         for string0 in pop:
             if string0 != None:
                 string += f'\n{string0}'
-    
+
+        for string1 in self.user_input.ot_switches:
+            if string1 != None:
+                string += f'\n{string1}'
+                
         if 'pop_parameters' not in self.dict:
             return string
         wob = self.user_input.pop_parameters

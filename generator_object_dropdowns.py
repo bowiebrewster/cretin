@@ -19,6 +19,9 @@ class User_input():
         # plots
         self.plots = []
 
+        # histories 
+        self.source_histories = []
+
     # Define your function
     def drop_source_jnu(self):
         # Create interactive widgets for all arguments
@@ -55,8 +58,8 @@ class User_input():
             values_value = eval(self.values_input.value)
             nodes_value = eval(self.nodes_input.value)
 
-            lasray_lis = []
-            data = ['jnu', E_range_value, option_1_value, option_2_value, values_value, nodes_value, lasray_lis]
+            self.lasray_lis = []
+            data = ['jnu', E_range_value, option_1_value, option_2_value, values_value, nodes_value, self.lasray_lis]
             self.sources.append(data)
 
         self.button.on_click(on_button_click)
@@ -110,8 +113,8 @@ class User_input():
             values_value = eval(self.values_input.value)
             nodes_value = eval(self.nodes_input.value) if self.nodes_input.value else None
 
-            lasray_lis = []
-            data = ['jbndry', index_value, E_range_value, option_1_value, option_2_value, values_value, nodes_value, lasray_lis]
+            self.lasray_lis = []
+            data = ['jbndry', index_value, E_range_value, option_1_value, option_2_value, values_value, nodes_value, self.lasray_lis]
             self.sources.append(data)
 
         self.button.on_click(on_button_click)
@@ -158,8 +161,8 @@ class User_input():
             values_value = eval(self.values_input.value)
             nodes_value = eval(self.nodes_input.value)
 
-            lasray_lis = []
-            data = ['laser', laser_wavelength_value, option_1_value, option_2_value, values_value, nodes_value, lasray_lis]
+            self.lasray_lis = []
+            data = ['laser', laser_wavelength_value, option_1_value, option_2_value, values_value, nodes_value, self.lasray_lis]
             self.sources.append(data)
 
         self.button.on_click(on_button_click)
@@ -213,14 +216,65 @@ class User_input():
                 """)
 
             self.source_bound = [package_value, type_value, nodes_value, mult_value, value_value]
-            lasray_lis = []
-            data = ['boundary', self.source_bound, lasray_lis]
+            self.lasray_lis = []
+            data = ['boundary', self.source_bound, self.lasray_lis]
             self.source_boundaries = data
 
         self.button.on_click(on_button_click)
 
         # Display the widgets within an HBox
         display(widgets.HBox([self.package_dropdown, self.type_dropdown, self.nodes_input, self.value_input, self.mult_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
+
+
+    def drop_source_lasray(self):
+        # Create interactive widgets for all arguments
+        self.entrance_position_input = widgets.FloatText(
+            description="Entrance Position:",
+            layout=widgets.Layout(width="200px"),
+            value=0.0)  # Default value set to 0.0
+
+        self.entrance_direction_mu_input = widgets.FloatText(
+            description="Entrance Direction (mu):",
+            layout=widgets.Layout(width="200px"),
+            value=0.0)  # Default value set to 0.0
+
+        self.entrance_direction_phi_input = widgets.FloatText(
+            description="Entrance Direction (phi):",
+            layout=widgets.Layout(width="200px"),
+            value=0.0)  # Default value set to 0.0
+
+        self.fractional_power_input = widgets.FloatText(
+            description="Fractional Power:",
+            layout=widgets.Layout(width="200px"),
+            value=0.0)  # Default value set to 0.0
+
+        self.res_frac_input = widgets.FloatText(
+            description="Resolution Fraction (Optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.button = widgets.Button(description="Add Lasray")
+
+        # Define your function
+        def on_button_click(b):
+            entrance_position_value = self.entrance_position_input.value
+            entrance_direction_mu_value = self.entrance_direction_mu_input.value
+            entrance_direction_phi_value = self.entrance_direction_phi_input.value
+            fractional_power_value = self.fractional_power_input.value
+            res_frac_value = self.res_frac_input.value
+
+            if not hasattr(self, 'lasray_lis'):
+                raise Exception('lasray command must be added after laser command')
+            else:
+                lasray_data = [entrance_position_value, entrance_direction_mu_value,
+                               entrance_direction_phi_value, fractional_power_value, res_frac_value]
+                self.lasray_lis.append(lasray_data)
+
+        self.button.on_click(on_button_click)
+
+        # Display the widgets
+        display(HBox([self.entrance_position_input, self.entrance_direction_mu_input, self.entrance_direction_phi_input,
+                      self.fractional_power_input, self.res_frac_input, self.button]))
+
 
     def drop_geometry_quad(self):
 
@@ -933,6 +987,66 @@ class User_input():
                       self.use_lte_checkbox, self.electron_temp_input, self.ion_temp_input, self.ion_velocities_input,
                       self.button],layout = widgets.Layout(flex_flow='wrap')))
 
+    
+
+    def drop_source_history(self):
+        # Create interactive widgets for all arguments
+        self.id_input = widgets.IntText(
+            description="ID:",
+            layout=widgets.Layout(width="200px"))
+
+        self.value_multiplier_input = widgets.FloatText(
+            description="Value Multiplier (Optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.time_multiplier_input = widgets.FloatText(
+            description="Time Multiplier (Optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.pulse_type_dropdown = widgets.Dropdown(
+            options=['gaussian'],
+            description="Pulse Type:",
+            layout=widgets.Layout(width="200px"))
+
+        self.p1_input = widgets.FloatText(
+            description="P1 (Optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.p2_input = widgets.FloatText(
+            description="P2 (Optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.button = widgets.Button(description="Add History")
+
+        # Define your function
+        def on_button_click(b):
+            id_value = self.id_input.value
+            value_multiplier_value = self.value_multiplier_input.value
+            time_multiplier_value = self.time_multiplier_input.value
+            pulse_type_value = self.pulse_type_dropdown.value
+            p1_value = self.p1_input.value
+            p2_value = self.p2_input.value
+
+            string_input_requirement(pulse_type_value, ['gaussian'])
+
+            data = [id_value, value_multiplier_value, time_multiplier_value, pulse_type_value, p1_value, p2_value]
+            self.source_histories.append(data)
+
+            # Clear input fields after adding the history data
+            self.id_input.value = None
+            self.value_multiplier_input.value = None
+            self.time_multiplier_input.value = None
+            self.pulse_type_dropdown.value = None
+            self.p1_input.value = None
+            self.p2_input.value = None
+
+        self.button.on_click(on_button_click)
+
+        # Display the widgets
+        display(widgets.HBox([self.id_input, self.value_multiplier_input, self.time_multiplier_input,
+                              self.pulse_type_dropdown, self.p1_input, self.p2_input, self.button]))
+    
+    
     def drop_source_rswitch(self):
 
         # Create interactive widgets for all arguments
@@ -1108,20 +1222,19 @@ class User_input():
             continuum_lowering_control_dict = {'approximate accounting for missing Rydberg levels': -1, 'no continuum lowering': 0, 'Stewart-Pyatt with formula for degeneracy lowering': 1, 'Stewart-Pyatt with microfield degeneracy lowering': 2, 'microfield degeneracy lowering w/o continuum lowering': 3, 'SP/EK w/o degeneracy lowering': 5, 'use maximum of SP/EK and approximate accounting': 10}
             temp_calc_dict = {'temp calc = none': 0, 'temp calc = time dependant': 1, 'temp calc = steady state': -1}
 
-            string0 = f'switch 151 {str(include_degeneracy_dict[include_degeneracy_value])}' if include_degeneracy_value else None
-            string1 = f'switch 29 {str(time_step_dict[timestep_type_value])}' if timestep_type_value else None
-            string2 = f'switch 36 {str(continuum_transfer_dict[continuum_transfer_value])}' if continuum_transfer_value else None
-            string3 = 'switch 100 1' if continuum_transfer_evolves_temp_value else None
-            string4 = f'switch 30 {str(timestep_between_snapshot_value)}' if timestep_between_snapshot_value is not None else None
-            string5 = f'switch 25 {str(kinematics_dict[kinematics_value])}' if kinematics_value else None
-            string6 = f'switch 28 {str(initialization_control_dict[initialization_control_value])}' if initialization_control_value else None
-            string7 = f'switch 55 {str(continuum_lowering_control_dict[continuum_lowering_control_value])}' if continuum_lowering_control_value else None
-            string8 = 'switch 45 1' if raytrace_value else None
-            string9 = f'switch 31 {str(temp_calc_dict[temparture_calc_heating_rates_value])}' if temparture_calc_heating_rates_value else None
-            string10 = f'switch 44 {str(max_iterations_per_timestep_value)}' if max_iterations_per_timestep_value is not None else None
+            string0 = f'switch 25 {str(kinematics_dict[kinematics_value])}' if kinematics_value else None
+            string1 = f'switch 28 {str(initialization_control_dict[initialization_control_value])}' if initialization_control_value else None
+            string2 = f'switch 29 {str(time_step_dict[timestep_type_value])}' if timestep_type_value else None
+            string3 = f'switch 30 {str(timestep_between_snapshot_value)}' if timestep_between_snapshot_value is not None else None
+            string4 = f'switch 31 {str(temp_calc_dict[temparture_calc_heating_rates_value])}' if temparture_calc_heating_rates_value else None
+            string5 = f'switch 36 {str(continuum_transfer_dict[continuum_transfer_value])}' if continuum_transfer_value else None
+            string6 = f'switch 44 {str(max_iterations_per_timestep_value)}' if max_iterations_per_timestep_value is not None else None
+            string7 = f'switch 45 1' if raytrace_value else None
+            string8 = f'switch 55 {str(continuum_lowering_control_dict[continuum_lowering_control_value])}' if continuum_lowering_control_value else None
+            string9 = f'switch 100 1' if continuum_transfer_evolves_temp_value else None
+            string10 = f'switch 151 {str(include_degeneracy_dict[include_degeneracy_value])}' if include_degeneracy_value else None
 
             data = [value for key, value in locals().items() if 'string' in key]
-            print(data)
             self.pop_switches = data
 
         self.button.on_click(on_button_click)
@@ -1256,11 +1369,13 @@ class User_input():
             elif summ == 0:
                 self.plots.append([name_value, xvar_value, yvar_value])
             else:
-                print('Including some of "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier" is ambiguous and may lead to incorrect behavior in "add_plots"')
-                lis = [name_value, xvar_value, yvar_value, element_or_transition_value, node_value,
-                       frequency_or_isosequence_value, direction_or_level_value, multiplier_value]
-                lis = [x for x in lis if x is not None]
-                self.plots.append(lis)
+                raise Exception('Including some of "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier" is ambiguous and may lead to incorrect behavior in "add_plots')
+
+
+            lis = [name_value, xvar_value, yvar_value, element_or_transition_value, node_value,
+                    frequency_or_isosequence_value, direction_or_level_value, multiplier_value]
+            lis = [x for x in lis if x is not None]
+            self.plots.append(lis)
 
         self.button.on_click(on_button_click)
 
@@ -1407,6 +1522,19 @@ class User_input():
         self.lasray_lis = []
         self.sources.append(['jnu', E_range, option_1, option_2, values, nodes, self.lasray_lis])
 
+    def source_lasray(self, entrance_position:float, entrance_direction_mu:float, entrance_direction_phi:float, fractional_power:float, res_frac:float = None):
+        if not hasattr(self, 'lasray_lis'):
+            raise Exception('lasray command must be added after laser command')
+        else:
+            self.lasray_lis.append([entrance_position, entrance_direction_mu, entrance_direction_phi, fractional_power, res_frac])
+
+
+    def source_history(self, id: int, value_multiplier : float = None, time_multiplier : float = None, pulse_type : str = None, p1 : float = None, p2 : float = None):
+        string_input_requirement(pulse_type, ['gaussian'])
+        if not recursive_search(self.sources, 'history'):
+            raise Exception('history command must bec attached to some earlier history input inside f.e source laser command')
+        data = [id, value_multiplier, time_multiplier, pulse_type,p1, p2]
+        self.source_histories.append(data)
 
     def source_rswitch(self, c_is_inf : bool = None, assume_NLTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
@@ -1546,6 +1674,46 @@ class User_input():
             
         self.pop_switches = [value for key, value in locals().items() if 'string' in key]
 
+
+    def other_switches(self, population_calculation: str  = None, subcycle_maximum : int = None, do_kinetics_zone_centerd : bool = None, 
+                       resonant_absrption_fraction: str = None, control_calc_thermal_conduct: str = None):
+        #switches   2,3,10,49,47
+
+        pop_cal_dict = {'assuming steady state diffusion': 0, 'time dependent diffusion': 1}
+        string0 = switch_format(population_calculation, pop_cal_dict, 2)
+
+        if subcycle_maximum == None:
+            string1 = None
+        else:
+            string1 = f'switch 3 {subcycle_maximum}' 
+
+
+        if do_kinetics_zone_centerd == None:
+            string2 = f'switch 10 0' 
+        else:
+            string2 = f'switch 10 1' 
+
+        resonant_absrption_fraction_dict = {'constant value for each ray from lasray': 0, 
+                                            'Ginzburg formula': 1,
+                                            'Ginzburg formula + smooth resonant absorption over neighboring zones':-1,
+                                            'tabulated values': .5,
+                                            'tabulated values + smooth resonant absorption over neighboring zones':-.5}
+        string3 = switch_format(population_calculation, resonant_absrption_fraction_dict, 47)
+        thermal_conduction_dict = {
+            'no thermal conduction': 0,
+            'include thermal conduction': 1,
+            'use iccg': 2,
+            'use ilur': 3,
+            'use gmres with diagonal preconditioning': 4,
+            'use gmres with iccg preconditioning': 5,
+            'use gmres with ilur preconditioning': 6,
+            'use gmres with no preconditioning': 7
+        }
+        string4 = switch_format(control_calc_thermal_conduct, thermal_conduction_dict, 49)
+
+        self.ot_switches = [value for key, value in locals().items() if 'string' in key]
+
+
     def parameters(self, scattering_muliplier : float = None, initial_timestep : float = None, minimum_timestep : float = None, maximum_timestep : float = None, time_between_snapshots : float = None):
         if scattering_muliplier == None:
             string1 = None
@@ -1592,10 +1760,10 @@ class User_input():
         elif summ == 0:
             self.plots.append([name, xvar, yvar])
         else:
-            print('including some of "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier" is ambigious and may lead to incorrect behaviour in "add plots"')
-            lis = [name, xvar, yvar, element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier]
-            lis.remove(None)
-            self.plots.append(lis)
+            raise Exception('Including some of "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier" is ambiguous and may lead to incorrect behavior in "add_plots')
+        lis = [name, xvar, yvar, element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier]
+        lis.remove(None)
+        self.plots.append(lis)
 
 #################################################################################################################################################
 
@@ -1628,7 +1796,6 @@ def element_input_requirement(element: str):
 
     element_list = new
     element = element.upper()
-    #print(element, element_list)
     if element not in element_list: 
         #raise Exception('must be one of H, HE, LI, BE ...')
         pass
@@ -1637,3 +1804,21 @@ def interger_input_requirement(inter : int, options : list):
     if inter not in options:
         fstrin = f'{inter} is not one of: {options}'
         raise Exception(fstrin)
+    
+
+def recursive_search(item, target):
+    if isinstance(item, list):
+        for sub_item in item:
+            if recursive_search(sub_item, target):
+                return True
+    elif item == target:
+        return True
+    return False
+
+def switch_format(entry, dict, switch_nr):
+    if entry == None:
+        return None
+    else:
+        string_input_requirement(entry, dict.keys())
+        return f'switch {switch_nr} {dict[entry]})'
+                
