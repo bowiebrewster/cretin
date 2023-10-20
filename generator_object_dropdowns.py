@@ -22,8 +22,11 @@ class User_input():
         # histories 
         self.source_histories = []
 
+        # laser
+        self.lasers = []
+
     # Define your function
-    def drop_source_jnu(self):
+    def drop_sources_source_jnu(self):
         # Create interactive widgets for all arguments
         self.E_range_input = widgets.Text(
             description="energy range (list):",
@@ -58,7 +61,7 @@ class User_input():
             values_value = eval(self.values_input.value)
             nodes_value = eval(self.nodes_input.value)
 
-            self.lasray_lis = []
+            
             data = ['jnu', E_range_value, option_1_value, option_2_value, values_value, nodes_value, self.lasray_lis]
             self.sources.append(data)
 
@@ -69,7 +72,7 @@ class User_input():
         display(HBox([self.E_range_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button],layout = widgets.Layout(flex_flow='wrap')))
 
 
-    def drop_source_jbndry(self):
+    def drop_sources_source_jbndry(self):
 
         # Create interactive widgets for all arguments
         self.index_input = widgets.IntText(
@@ -113,7 +116,7 @@ class User_input():
             values_value = eval(self.values_input.value)
             nodes_value = eval(self.nodes_input.value) if self.nodes_input.value else None
 
-            self.lasray_lis = []
+            
             data = ['jbndry', index_value, E_range_value, option_1_value, option_2_value, values_value, nodes_value, self.lasray_lis]
             self.sources.append(data)
 
@@ -123,7 +126,7 @@ class User_input():
         display(HBox([self.index_input, self.E_range_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
 
-    def drop_source_laser(self):
+    def drop_sources_source_laser(self):
 
         # Create interactive widgets for all arguments
         self.laser_wavelength_input = widgets.FloatText(
@@ -161,7 +164,7 @@ class User_input():
             values_value = eval(self.values_input.value)
             nodes_value = eval(self.nodes_input.value)
 
-            self.lasray_lis = []
+            
             data = ['laser', laser_wavelength_value, option_1_value, option_2_value, values_value, nodes_value, self.lasray_lis]
             self.sources.append(data)
 
@@ -170,7 +173,7 @@ class User_input():
         # Display the widgets
         display(widgets.HBox([self.laser_wavelength_input, self.option_1_dropdown, self.option_2_dropdown, self.values_input, self.nodes_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
-    def drop_source_boundary(self):
+    def drop_sources_boundary(self):
 
         # Create interactive widgets for all arguments
         self.package_dropdown = widgets.Dropdown(
@@ -216,7 +219,7 @@ class User_input():
                 """)
 
             self.source_bound = [package_value, type_value, nodes_value, mult_value, value_value]
-            self.lasray_lis = []
+            
             data = ['boundary', self.source_bound, self.lasray_lis]
             self.source_boundaries = data
 
@@ -226,7 +229,7 @@ class User_input():
         display(widgets.HBox([self.package_dropdown, self.type_dropdown, self.nodes_input, self.value_input, self.mult_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
 
 
-    def drop_source_lasray(self):
+    def drop_sources_lasray(self):
         # Create interactive widgets for all arguments
         self.entrance_position_input = widgets.FloatText(
             description="Entrance Position:",
@@ -989,7 +992,7 @@ class User_input():
 
     
 
-    def drop_source_history(self):
+    def drop_sources_history(self):
         # Create interactive widgets for all arguments
         self.id_input = widgets.IntText(
             description="ID:",
@@ -1047,7 +1050,7 @@ class User_input():
                               self.pulse_type_dropdown, self.p1_input, self.p2_input, self.button]))
     
     
-    def drop_source_rswitch(self):
+    def drop_sources_rswitch(self):
 
         # Create interactive widgets for all arguments
         self.c_is_inf_checkbox = widgets.Checkbox(
@@ -1399,7 +1402,7 @@ class User_input():
         string_input_requirement(type2, ['fly','term','dca','radonly','sublevel','johnson'])
         self.modeltype_of_atom.append([type1, type2])
 
-    def materials_region(self, nodes :list, elec_temp : float, ion_temp : float = None, rad_temp : float = None):
+    def materials_region(self, nodes :list, elec_temp : float, ion_temp : float = None, rad_temp : float = None, qstart : bool = False):
         if ion_temp == None:
             ion_temp = elec_temp
         if rad_temp == None:
@@ -1410,11 +1413,13 @@ class User_input():
         
         self.elements_of_region, self.material_of_region, self.rho_of_region= [], [], []
         self.background_of_region, self.opacity_of_region, self.level_of_region  = [], [], []
+        self.qstart = qstart
+        
 
         # this works retroactively, I put the material_of_region list inside the self.region, if i later change 
         # the list it gets changed while its in the self.region
         self.region0 = [self.dimension, nodes, elec_temp, ion_temp, rad_temp]
-        self.regions.append((self.region0, self.elements_of_region, self.material_of_region, self.rho_of_region, self.background_of_region))
+        self.regions.append((self.region0, self.elements_of_region, self.material_of_region, self.rho_of_region, self.background_of_region, self.qstart))
 
     def materials_region_rho(self, rho : float):
         self.rho_of_region.append(rho)
@@ -1489,7 +1494,7 @@ class User_input():
     def radiation_aprd(self, voigt_parameters : list):
         self.sources_aprd.append(voigt_parameters)
     
-    def source_boundary(self, package: str, type : str, nodes : list, value : float , mult : float = None):
+    def sources_boundary(self, package: str, type : str, nodes : list, value : float , mult : float = None):
         string_input_requirement(package, ['radiation', 'conduction', 'hydro', 'velocity', 'pressure', 'divertor', 'current','all'])
         string_input_requirement(type, ['streaming', 'milne','value'])
         if len(nodes) not in [1,4,6]:
@@ -1501,42 +1506,48 @@ class User_input():
 
         self.source_bound = [package, type, nodes, mult, value]
 
-    def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, values : list, nodes : list):
+    def sources_source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
-        self.lasray_lis = []
+        
 
         self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes, self.lasray_lis])
     
-    def source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list = None):
+    def sources_source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.lasray_lis = []
+        
         self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes, self.lasray_lis])
 
-    def source_jnu(self, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
+    def sources_source_jnu(self, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.lasray_lis = []
+        
         self.sources.append(['jnu', E_range, option_1, option_2, values, nodes, self.lasray_lis])
 
-    def source_lasray(self, entrance_position:float, entrance_direction_mu:float, entrance_direction_phi:float, fractional_power:float, res_frac:float = None):
+    def sources_laser(self, index, laser_wavelength : float, option_1 : str, option_2, multiplier : float, id_value:float ,polarization_fraction: float = None):
+        string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
+        string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
+        self.lasray_lis = []
+        self.lasers.append([index, laser_wavelength, option_1, option_2, multiplier, id_value, polarization_fraction, self.lasray_lis])
+
+    def sources_lasray(self, entrance_position:float, entrance_direction_mu:float, entrance_direction_phi:float, fractional_power:float, res_frac:float = None):
         if not hasattr(self, 'lasray_lis'):
             raise Exception('lasray command must be added after laser command')
         else:
             self.lasray_lis.append([entrance_position, entrance_direction_mu, entrance_direction_phi, fractional_power, res_frac])
 
 
-    def source_history(self, id: int, value_multiplier : float = None, time_multiplier : float = None, pulse_type : str = None, p1 : float = None, p2 : float = None):
+    def sources_history(self, id: int, value_multiplier : float = None, time_multiplier : float = None, pulse_type : str = None, p1 : float = None, p2 : float = None):
         string_input_requirement(pulse_type, ['gaussian'])
-        if not recursive_search(self.sources, 'history'):
+        if (not recursive_search(self.sources, 'history')) and (not recursive_search(self.lasers, 'history')):
             raise Exception('history command must bec attached to some earlier history input inside f.e source laser command')
         data = [id, value_multiplier, time_multiplier, pulse_type,p1, p2]
         self.source_histories.append(data)
 
-    def source_rswitch(self, c_is_inf : bool = None, assume_NLTE : bool = None, radiation_transfer_algorithm1d : str = None, 
+    def sources_rswitch(self, c_is_inf : bool = None, assume_NLTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
                        multi_group_acceleration : str = None, use_flux_limiting : bool = None):
         string0 = 'rswitch 5 0' if c_is_inf == True else None

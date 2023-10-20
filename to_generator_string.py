@@ -39,17 +39,18 @@ class Text_generator():
             line = f'atoms hydrogenic_{atom0[1]} {atom0[0]} \n'
             string += line
 
-            modeltype0 = modeltype[0]
-            if len(modeltype0)>0:
-                line = f'\tmodeltype '
+            if len(modeltype) > 0:
+                modeltype0 = modeltype[0]
+                if len(modeltype0)>0:
+                    line = f'\tmodeltype '
 
-                for model in modeltype0:
-                    if model != None:
-                        line +=f' {model}'
-                string += line
+                    for model in modeltype0:
+                        if model != None:
+                            line +=f' {model}'
+                    string += line
 
         for region in regions:
-            region0, element_of_region, material_of_region, rho_of_region, background_of_region = region
+            region0, element_of_region, material_of_region, rho_of_region, background_of_region, qstart = region
             strings0 = ['region','regionkl','regionklm']
             string += f'\n{strings0[region0[0]-1]} {self.ilts(region0[1])} {self.ilts(region0[2:])}'
 
@@ -64,6 +65,9 @@ class Text_generator():
 
             for bac in background_of_region:
                 string += f'\n\tbackground {self.ilts(background_of_region[0])}'
+
+            if qstart:
+                string += f'\n\tqstart'
         return string
 
     def geometry(self):
@@ -73,10 +77,10 @@ class Text_generator():
 
         if 'geom_nodes' in self.dict:
             nodes = self.user_input.geom_nodes
-            nodes0 = f"{nodes[0]}{nodes[1]} {self.ilts(nodes[2])} {self.ilts(nodes[3])} "
+            nodes0 = f"{nodes[0]}{nodes[1]} {self.ilts(nodes[2])} {self.ilts(nodes[3])}  "
 
             string +='\n' + nodes0
-            for val in nodes[4:-1]:
+            for val in nodes[4:]:
                 if val != None:
                     string += f"{val} "
         
@@ -124,11 +128,22 @@ class Text_generator():
             else:
                 raise Exception("Source must be type 'jbndry', 'jnu' or 'laser' ")
             
-            lasrays = source[-1]
-            for lasray in lasrays:
-                string += f'\n\tlasray {self.ilts(lasray)}'
-            
+        string += '\n'
+
+        if 'lasers' in self.dict:
+
+            lasers = self.user_input.lasers
+            for laser in lasers:
+                string += f'laser {laser[0]} {laser[1]}x {laser[2]} {laser[3]} {laser[4]} {laser[5]}'
+                if laser[6] != None:
+                    string += f' {laser[6]}'
+
+                lasrays = laser[-1]
+                for lasray in lasrays:
+                    string += f'\n\tlasray {self.ilts(lasray)}'
+                    
             string += '\n'
+
         if 'source_bound' in self.dict:
             bound = self.user_input.source_bound
             last = '' if bound[-1] == None else bound[-1]
@@ -157,18 +172,19 @@ class Text_generator():
         return string 
     
     def controls(self):
-        if 'control' not in self.dict:
-            return ""
-        control = self.user_input.control
-        string = self.start_chapter('Controls')
-        string += '\ntstart '+str(control[0])
-        string += '\ntquit '+str(control[1])
-        if control[2]:
-            string += '\n\nrestart '
-        if control[3]:
-            string += '\n edits'
-        string += '\n\ndump all'
-
+        if 'control' in self.dict:
+            control = self.user_input.control
+            string = self.start_chapter('Controls')
+            string += '\ntstart '+str(control[0])
+            string += '\ntquit '+str(control[1])
+            if control[2]:
+                string += '\n\nrestart '
+            if control[3]:
+                string += '\n edits'
+            string += '\n\ndump all'
+        else:
+            string = self.start_chapter('Controls')
+            string += '\n\ndump all'
         return string
     
     def pop_switches(self):
