@@ -49,10 +49,10 @@ class Generators():
             return(df)
         
     def chapter(self, input : str):
-        chapter = 'Geometry'
+
         str_id = "c ----------------------------------"
         saves = []
-        def read_gen(word, complete_path):
+        def read_gen(chapter, complete_path):
             f = open(complete_path, "r")
             lines = f.readlines()
             reading = False
@@ -83,7 +83,7 @@ class Generators():
                             ):
             df = df.drop('c')
             try:
-                df.drop(chapter.lower())
+                df.drop(input.lower())
             except:
                 pass
 

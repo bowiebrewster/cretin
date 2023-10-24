@@ -3,7 +3,7 @@ import os
 import paths
 import write_run_plot
 
-def run_premades(sub_name = None):
+def run_premades(sub_name:str = None):
 
     for file_name in os.listdir(paths.to_personal_data()):
         if sub_name in file_name:

@@ -34,6 +34,7 @@ def run(name : str, longprint : bool, object = None, plot_duplicates = None):
 
     env["ARG_NAME0"] = name
     env["ARG_NAME1"] = path
+    env["CRETIN_BIN_DIR"] = paths.to_cretin_ex()
 
     process = subprocess.Popen(paths.to_folder_cretin() + 'demo.sh', shell = True , stdout = subprocess.PIPE, stderr = subprocess.PIPE, env = env)
     process.wait() # Wait for process to complete.

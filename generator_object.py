@@ -149,22 +149,21 @@ class User_input():
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
         
-
-        self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes, self.lasray_lis])
+        self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes])
     
     def sources_source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
         
-        self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes, self.lasray_lis])
+        self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes])
 
     def sources_source_jnu(self, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
         
-        self.sources.append(['jnu', E_range, option_1, option_2, values, nodes, self.lasray_lis])
+        self.sources.append(['jnu', E_range, option_1, option_2, values, nodes])
 
     def sources_laser(self, index, laser_wavelength : float, option_1 : str, option_2, multiplier : float, id_value:float ,polarization_fraction: float = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
