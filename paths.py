@@ -14,7 +14,7 @@ def to_personal_data():
     return path
 
 def to_folder_cretin():
-    #add the path to your test folder here
+    #add the path to this folder 
     path_test = '/home/brewster/Desktop/cretin/cretin/'
 
     if os.path.exists(path_test): 

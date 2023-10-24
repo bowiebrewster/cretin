@@ -12,7 +12,7 @@ for obj in [generator_object, to_generator_string, search, paths, plt_file]:
 
 
 # takes the text string and writes it to the cretin generator file
-def write(name : str, object):
+def write(name : str, object, longprint = None, plot_duplicates = None):
     string = to_generator_string.Text_generator(object).execute()
 
     if not os.path.exists(paths.to_personal_data() + name):
@@ -25,7 +25,7 @@ def write(name : str, object):
             f.write(str(x))
 
 #  running cretin using the written generator file
-def run(name : str, longprint : bool):
+def run(name : str, longprint : bool, object = None, plot_duplicates = None):
     print(f'running cretin with {name}')
     import subprocess
 
@@ -95,7 +95,7 @@ def blacklist_key(key : str):
     else:
         return False
 
-def plot(name : str, longprint : bool, plot_duplicates : bool):
+def plot(name : str, longprint : bool, plot_duplicates : bool, object = None):
     fullpath = dump_path(name)
     print(name, fullpath)
     with h5py.File(fullpath, 'r') as f:

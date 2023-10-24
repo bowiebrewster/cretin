@@ -4,6 +4,10 @@ reload(paths)
 import numpy as np
 import matplotlib.pyplot as plt
 
+# We use this file to turn existing data structure 
+
+
+
 # for .plt files created by cretin we extract the data here
 path = paths.to_personal_data()
 

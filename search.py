@@ -49,7 +49,6 @@ class Generators():
             return(df)
         
     def chapter(self, input : str):
-        lis_hist = []
         chapter = 'Geometry'
         str_id = "c ----------------------------------"
         saves = []

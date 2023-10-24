@@ -1,12 +1,10 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import paths
-# this is the class that creates the generator class object which stores the user input and makes it accesible, readable and returns error messages.
-# this class allows ur to write readable intuitive code in the main cretin ipynb notebook using the full 
-# capabilities of python
 
-# change
+import pandas as pd
+import paths
+from drop_methods_module import DropMethods
+#this is a casual 1600 line python file what about it
+
+
 class User_input():
     def __init__(self):
         # materials
@@ -19,6 +17,16 @@ class User_input():
 
         # plots
         self.plots = []
+
+        # histories 
+        self.source_histories = []
+
+        # laser
+        self.lasers = []
+
+        self.drop = DropMethods()
+
+#################################################################################################################################################
 
     # materials
     def materials_atom(self, element : str, quantum_n_max : int = 10, iso_min : int = None, iso_max : int= None, index : int = None):
@@ -33,7 +41,7 @@ class User_input():
         string_input_requirement(type2, ['fly','term','dca','radonly','sublevel','johnson'])
         self.modeltype_of_atom.append([type1, type2])
 
-    def materials_region(self, nodes :list, elec_temp : float, ion_temp : float = None, rad_temp : float = None):
+    def materials_region(self, nodes :list, elec_temp : float, ion_temp : float = None, rad_temp : float = None, qstart : bool = False):
         if ion_temp == None:
             ion_temp = elec_temp
         if rad_temp == None:
@@ -44,17 +52,20 @@ class User_input():
         
         self.elements_of_region, self.material_of_region, self.rho_of_region= [], [], []
         self.background_of_region, self.opacity_of_region, self.level_of_region  = [], [], []
+        self.qstart = qstart
+        
 
         # this works retroactively, I put the material_of_region list inside the self.region, if i later change 
         # the list it gets changed while its in the self.region
         self.region0 = [self.dimension, nodes, elec_temp, ion_temp, rad_temp]
-        self.regions.append((self.region0, self.elements_of_region, self.material_of_region, self.rho_of_region, self.background_of_region))
+        self.regions.append((self.region0, self.elements_of_region, self.material_of_region, self.rho_of_region, self.background_of_region, self.qstart))
 
     def materials_region_rho(self, rho : float):
         self.rho_of_region.append(rho)
 
-    def materials_region_element(self,  initial_ion_population : float, index : int = None):
-        self.elements_of_region.append([index, initial_ion_population])
+    def materials_region_element(self,  initial_ion_population : float, index : int = None, isoelectric_sequence : list = None,
+                                  use_lte:bool = False, electron_temp : float = None, ion_temp :float = None, ion_velocities :float = None):
+        self.elements_of_region.append([index, initial_ion_population, isoelectric_sequence, use_lte, electron_temp, ion_temp, ion_velocities])
 
     def materials_region_material(self, rho : float, atom_n : float, charge_avg : float, charge_avg_squared: float):
         self.material_of_region.append([rho, atom_n, charge_avg, charge_avg_squared])
@@ -122,7 +133,7 @@ class User_input():
     def radiation_aprd(self, voigt_parameters : list):
         self.sources_aprd.append(voigt_parameters)
     
-    def source_boundary(self, package: str, type : str, nodes : list, value : float , mult : float = None):
+    def sources_boundary(self, package: str, type : str, nodes : list, value : float , mult : float = None):
         string_input_requirement(package, ['radiation', 'conduction', 'hydro', 'velocity', 'pressure', 'divertor', 'current','all'])
         string_input_requirement(type, ['streaming', 'milne','value'])
         if len(nodes) not in [1,4,6]:
@@ -134,29 +145,48 @@ class User_input():
 
         self.source_bound = [package, type, nodes, mult, value]
 
-    def source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, values : list, nodes : list):
+    def sources_source_laser(self, laser_wavelength : float, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
-        self.lasray_lis = []
+        
 
         self.sources.append(["laser", laser_wavelength, option_1, option_2, values, nodes, self.lasray_lis])
     
-    def source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list = None):
+    def sources_source_jbndry(self, index : int, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list = None):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.lasray_lis = []
+        
         self.sources.append(['jbndry', index, E_range, option_1, option_2, values, nodes, self.lasray_lis])
 
-    def source_jnu(self, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
+    def sources_source_jnu(self, E_range : list, option_1 : str, option_2 : str, values : list, nodes : list):
         string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
         string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
 
-        self.lasray_lis = []
+        
         self.sources.append(['jnu', E_range, option_1, option_2, values, nodes, self.lasray_lis])
 
+    def sources_laser(self, index, laser_wavelength : float, option_1 : str, option_2, multiplier : float, id_value:float ,polarization_fraction: float = None):
+        string_input_requirement(option_1, ['value', 'rate', 'integral', 'initial'])
+        string_input_requirement(option_2, ['xfile', 'history', 'profile', 'svlist','constant'])
+        self.lasray_lis = []
+        self.lasers.append([index, laser_wavelength, option_1, option_2, multiplier, id_value, polarization_fraction, self.lasray_lis])
 
-    def source_rswitch(self, c_is_inf : bool = None, assume_NLTE : bool = None, radiation_transfer_algorithm1d : str = None, 
+    def sources_lasray(self, entrance_position:float, entrance_direction_mu:float, entrance_direction_phi:float, fractional_power:float, res_frac:float = None):
+        if not hasattr(self, 'lasray_lis'):
+            raise Exception('lasray command must be added after laser command')
+        else:
+            self.lasray_lis.append([entrance_position, entrance_direction_mu, entrance_direction_phi, fractional_power, res_frac])
+
+
+    def sources_history(self, id: int, value_multiplier : float = None, time_multiplier : float = None, pulse_type : str = None, p1 : float = None, p2 : float = None):
+        string_input_requirement(pulse_type, ['gaussian'])
+        if (not recursive_search(self.sources, 'history')) and (not recursive_search(self.lasers, 'history')):
+            raise Exception('history command must bec attached to some earlier history input inside f.e source laser command')
+        data = [id, value_multiplier, time_multiplier, pulse_type,p1, p2]
+        self.source_histories.append(data)
+
+    def sources_rswitch(self, c_is_inf : bool = None, assume_NLTE : bool = None, radiation_transfer_algorithm1d : str = None, 
                        radiation_transfer_algorithm2d : str = None, max_iter_intensities_temp : int = None, 
                        multi_group_acceleration : str = None, use_flux_limiting : bool = None):
         string0 = 'rswitch 5 0' if c_is_inf == True else None
@@ -211,8 +241,8 @@ class User_input():
         if include_degeneracy == None:
             string0 = None
         else:
-            include_degeneracy_dict = {'include electron degeneracy' : .5,' ignore additional correction for ionizations' : -.5,
-                                       'integrate collisional ionizations numerically': 1.5,'integrate collisional excitations numerically': 2.5}
+            include_degeneracy_dict = {'no degeneracy':0,'include electron degeneracy': 0.5, 'ignore additional correction for ionizations': -0.5, 'integrate collisional ionizations numerically': 1.5, 'integrate collisional excitations numerically': 2.5}
+
             string_input_requirement(include_degeneracy, include_degeneracy_dict.keys())
             string0 = f'switch 151 {str(include_degeneracy_dict[include_degeneracy])}'
 
@@ -294,6 +324,46 @@ class User_input():
             
         self.pop_switches = [value for key, value in locals().items() if 'string' in key]
 
+
+    def other_switches(self, population_calculation: str  = None, subcycle_maximum : int = None, do_kinetics_zone_centerd : bool = None, 
+                       resonant_absrption_fraction: str = None, control_calc_thermal_conduct: str = None):
+        #switches   2,3,10,49,47
+
+        pop_cal_dict = {'assuming steady state diffusion': 0, 'time dependent diffusion': 1}
+        string0 = switch_format(population_calculation, pop_cal_dict, 2)
+
+        if subcycle_maximum == None:
+            string1 = None
+        else:
+            string1 = f'switch 3 {subcycle_maximum}' 
+
+
+        if do_kinetics_zone_centerd == None:
+            string2 = f'switch 10 0' 
+        else:
+            string2 = f'switch 10 1' 
+
+        resonant_absrption_fraction_dict = {'constant value for each ray from lasray': 0, 
+                                            'Ginzburg formula': 1,
+                                            'Ginzburg formula + smooth resonant absorption over neighboring zones':-1,
+                                            'tabulated values': .5,
+                                            'tabulated values + smooth resonant absorption over neighboring zones':-.5}
+        string3 = switch_format(resonant_absrption_fraction, resonant_absrption_fraction_dict, 47)
+        thermal_conduction_dict = {
+            'no thermal conduction': 0,
+            'include thermal conduction': 1,
+            'use iccg': 2,
+            'use ilur': 3,
+            'use gmres with diagonal preconditioning': 4,
+            'use gmres with iccg preconditioning': 5,
+            'use gmres with ilur preconditioning': 6,
+            'use gmres with no preconditioning': 7
+        }
+        string4 = switch_format(control_calc_thermal_conduct, thermal_conduction_dict, 49)
+
+        self.ot_switches = [value for key, value in locals().items() if 'string' in key]
+
+
     def parameters(self, scattering_muliplier : float = None, initial_timestep : float = None, minimum_timestep : float = None, maximum_timestep : float = None, time_between_snapshots : float = None):
         if scattering_muliplier == None:
             string1 = None
@@ -340,10 +410,13 @@ class User_input():
         elif summ == 0:
             self.plots.append([name, xvar, yvar])
         else:
-            print('including some of "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier" is ambigious and may lead to incorrect behaviour in "add plots"')
-            lis = [name, xvar, yvar, element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier]
-            lis.remove(None)
-            self.plots.append(lis)
+            raise Exception('Including some of "element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier" is ambiguous and may lead to incorrect behavior in "add_plots')
+        lis = [name, xvar, yvar, element_or_transition, node, frequency_or_isosequence, direction_or_level, multiplier]
+        lis.remove(None)
+        self.plots.append(lis)
+
+#################################################################################################################################################
+
 
 def list_input_requirement(lis):
     for input in lis: 
@@ -374,7 +447,6 @@ def element_input_requirement(element: str):
 
     element_list = new
     element = element.upper()
-    #print(element, element_list)
     if element not in element_list: 
         #raise Exception('must be one of H, HE, LI, BE ...')
         pass
@@ -383,3 +455,21 @@ def interger_input_requirement(inter : int, options : list):
     if inter not in options:
         fstrin = f'{inter} is not one of: {options}'
         raise Exception(fstrin)
+    
+
+def recursive_search(item, target):
+    if isinstance(item, list):
+        for sub_item in item:
+            if recursive_search(sub_item, target):
+                return True
+    elif item == target:
+        return True
+    return False
+
+def switch_format(entry, dict, switch_nr):
+    if entry == None:
+        return None
+    else:
+        string_input_requirement(entry, dict.keys())
+        return f'switch {switch_nr} {dict[entry]}'
+                

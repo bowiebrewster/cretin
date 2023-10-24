@@ -1,4 +1,4 @@
-# this file turns the creting generator object into a .gen file 
+# this file turns the creting generator object into a .gen file(string)
 
 class Text_generator():
     def __init__(self, user_input):
@@ -197,9 +197,10 @@ class Text_generator():
             if string0 != None:
                 string += f'\n{string0}'
 
-        for string1 in self.user_input.ot_switches:
-            if string1 != None:
-                string += f'\n{string1}'
+        if 'ot_switches' in self.dict:
+            for string1 in self.user_input.ot_switches:
+                if string1 != None:
+                    string += f'\n{string1}'
                 
         if 'pop_parameters' not in self.dict:
             return string
