@@ -35,6 +35,7 @@ def run(name : str, longprint : bool, object = None, plot_duplicates = None, new
     else:
         path = f'{newpath}{name}'
 
+    print(path,'\t', paths.to_cretin_ex())
     env["ARG_NAME0"] = name
     env["ARG_NAME1"] = path
     env["CRETIN_BIN_DIR"] = paths.to_cretin_ex()
@@ -223,7 +224,7 @@ def plot2d(path:str, masterkey:str, longprint:bool, plot_duplicates : bool, arr)
 def extra_plot(name : str, multiplot : bool = False):
     p = f'{paths.to_personal_data()}{name}/{name}.plt'
     if os.path.exists(p):
-        plt_file.txt_to_plot(folder_name = name, multiplot = multiplot)
+        plt_file.create_plot(folder_name = name, multiplot = multiplot)
 
 def all(name: str, object, longprint : bool, plot_duplicates : bool):
     write(name, object)

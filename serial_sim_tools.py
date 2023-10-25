@@ -254,7 +254,7 @@ def plt_files(path: str, trials : list):
 
         p = f'{paths.to_personal_data()}{trial}/{trial}.plt'
         if os.path.exists(p):
-            data = plt_file.txt_to_plot(trial, multiplot= True)
+            data = plt_file.create_plot(trial, multiplot= True)
 
             for key, value in data.items():
                 value = np.array(value)

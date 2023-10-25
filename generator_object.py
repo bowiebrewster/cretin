@@ -435,7 +435,7 @@ def string_input_requirement(string: str, options: list):
 def element_input_requirement(element: str):
     if 'element_list' not in globals():
         global element_list
-        df = pd.read_csv(f'{paths.to_folder_cretin()}periodic_table.csv')
+        df = pd.read_csv(f'{paths.to_folder_cretin()}/periodic_table.csv')
         element_list = df['Symbol'].to_string(index = False)
 
     new = []
