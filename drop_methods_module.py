@@ -1367,3 +1367,56 @@ class DropMethods:
         display(HBox([self.name_input, self.xvar_dropdown, self.yvar_dropdown, self.element_or_transition_input,
                     self.node_input, self.frequency_or_isosequence_input, self.direction_or_level_input,
                     self.multiplier_input, self.button], layout = widgets.Layout(flex_flow='wrap')))
+
+
+    def sources_lasray(self):
+        # Create interactive widgets for all arguments
+        self.entrance_position_input = widgets.FloatText(
+            description="Entrance Position:",
+            layout=widgets.Layout(width="200px"))
+
+        self.entrance_direction_mu_input = widgets.FloatText(
+            description="Entrance Direction (mu):",
+            layout=widgets.Layout(width="200px"))
+
+        self.entrance_direction_phi_input = widgets.FloatText(
+            description="Entrance Direction (phi):",
+            layout=widgets.Layout(width="200px"))
+
+        self.fractional_power_input = widgets.FloatText(
+            description="Fractional Power:",
+            layout=widgets.Layout(width="200px"))
+
+        self.res_frac_input = widgets.FloatText(
+            description="Residual Fraction (Optional):",
+            layout=widgets.Layout(width="200px"))
+
+        self.button = widgets.Button(description="Add Lasray")
+
+        # Define your function
+        def on_button_click(b):
+            entrance_position_value = self.entrance_position_input.value
+            entrance_direction_mu_value = self.entrance_direction_mu_input.value
+            entrance_direction_phi_value = self.entrance_direction_phi_input.value
+            fractional_power_value = self.fractional_power_input.value
+            res_frac_value = self.res_frac_input.value
+
+            if not hasattr(self, 'lasray_lis'):
+                raise Exception('lasray command must be added after laser command')
+            else:
+                lasray_lis = []
+                data = [entrance_position_value, entrance_direction_mu_value, entrance_direction_phi_value, fractional_power_value, res_frac_value]
+                lasray_lis.append(data)
+
+                # Clear input fields after adding the lasray data
+                self.entrance_position_input.value = None
+                self.entrance_direction_mu_input.value = None
+                self.entrance_direction_phi_input.value = None
+                self.fractional_power_input.value = None
+                self.res_frac_input.value = None
+
+        self.button.on_click(on_button_click)
+
+        # Display the widgets
+        display(widgets.HBox([self.entrance_position_input, self.entrance_direction_mu_input, self.entrance_direction_phi_input,
+                              self.fractional_power_input, self.res_frac_input, self.button]))

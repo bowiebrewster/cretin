@@ -2,14 +2,11 @@ from importlib import reload
 import paths 
 reload(paths)
 import numpy as np
+import h5py, os, glob, shutil
 import matplotlib.pyplot as plt
 
 # We use this file to turn existing data structure 
 
-
-
-# for .plt files created by cretin we extract the data here
-path = paths.to_personal_data()
 
 # this is an absolute monstrosity of string manipulation
 def restructure(line : str, count : int):
@@ -47,13 +44,12 @@ def restructure(line : str, count : int):
         data[vars].append(newline)
 
 
-def txt_to_plot(folder_name : str, multiplot : bool = False):
+def create_plot(folder_name : str, path:str = paths.to_personal_data(), multiplot : bool = False):
     folder = f'{path}{folder_name}'
     global data, start_lines, plot_count
     data, start_lines, plot_count = {},{},0
-
     
-    with open(f'{folder}/{folder_name}.plt') as f:
+    with open(plt_path(folder)) as f:
         lines = f.readlines()
 
         for count, line in enumerate(lines):
@@ -62,6 +58,13 @@ def txt_to_plot(folder_name : str, multiplot : bool = False):
     if multiplot:
         return data
     
+    if os.path.exists(f'{folder}/images'):
+        shutil.rmtree(f'{folder}/images')
+        print('removed existing image folder')
+    os.makedirs(f'{folder}/images')
+    print(f'Created image folder at {folder}/images')
+
+
     for key, value in data.items():
 
         value = np.array(value)
@@ -85,3 +88,8 @@ def txt_to_plot(folder_name : str, multiplot : bool = False):
     del data, start_lines, plot_count                    
 
 
+def plt_path(folder : str):
+    os.chdir(folder)
+    file_list = glob.glob('*.plt*')
+    fullpath = f'{folder}/{file_list[0]}'
+    return fullpath

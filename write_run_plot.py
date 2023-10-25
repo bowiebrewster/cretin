@@ -25,12 +25,15 @@ def write(name : str, object, longprint = None, plot_duplicates = None):
             f.write(str(x))
 
 #  running cretin using the written generator file
-def run(name : str, longprint : bool, object = None, plot_duplicates = None):
+def run(name : str, longprint : bool, object = None, plot_duplicates = None, newpath:str = None):
     print(f'running cretin with {name}')
     import subprocess
 
     env = os.environ.copy()
-    path = f'{paths.to_personal_data()}{name}'
+    if newpath == None:
+        path = f'{paths.to_personal_data()}{name}'
+    else:
+        path = f'{newpath}{name}'
 
     env["ARG_NAME0"] = name
     env["ARG_NAME1"] = path
@@ -73,11 +76,14 @@ naming_dict = {
 "drat" : "mesh + kappa_sp + emis_sp + velocity"
 }
 
-def dump_path(name : str):
-    path_test = paths.to_personal_data()
+def dump_path(name : str, newpath):
+    if newpath == None:
+        path_test = paths.to_personal_data()
+    else:
+        path_test = newpath
     os.chdir(f'{path_test}/{name}')
     file_list = glob.glob('*.d0*')
-    print("file list",file_list)
+
     fullpath = f'{path_test}/{name}/{file_list[0]}'
     return fullpath
 
@@ -96,11 +102,15 @@ def blacklist_key(key : str):
     else:
         return False
 
-def plot(name : str, longprint : bool, plot_duplicates : bool, object = None):
-    fullpath = dump_path(name)
-    print(name, fullpath)
+def plot(name : str, longprint : bool, plot_duplicates : bool, object = None, newpath:str = None):
+    fullpath = dump_path(name, newpath)
+
     with h5py.File(fullpath, 'r') as f:
-        path = paths.to_personal_data() + name + '/images'
+        if newpath == None:
+            path = paths.to_personal_data() + name + '/images'
+        else:
+            path = newpath + name + '/images'
+        
         if os.path.exists(path):
             shutil.rmtree(path) 
         os.mkdir(path)
@@ -111,7 +121,7 @@ def plot(name : str, longprint : bool, plot_duplicates : bool, object = None):
         arrays2d, arrays3d = {}, {}
         counter = 0
 
-        for key, value in f.items():
+        for key in f.keys():
             arr = np.array(f[key])
             dim = len(arr.shape)
             
